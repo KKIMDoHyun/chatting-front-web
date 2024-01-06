@@ -59,9 +59,12 @@ export const Gnb: React.FC = () => {
           <button className="md:hidden">
             <MenuSvg />
           </button>
-          <button className="hidden md:block text-[1.6rem] px-[1.6rem] py-[0.8rem] w-fit font-bold whitespace-nowrap rounded-md border-[1px] border-gray-400 hover:bg-gray-100 hover:opacity-[0.7]">
+          <a
+            href="/chatting"
+            className="hidden md:block text-[1.6rem] px-[1.6rem] py-[0.8rem] w-fit font-bold whitespace-nowrap rounded-md border-[1px] border-gray-400 hover:bg-gray-100 hover:opacity-[0.7]"
+          >
             채팅하기
-          </button>
+          </a>
         </div>
       </div>
     </div>
