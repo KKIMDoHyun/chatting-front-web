@@ -1,4 +1,6 @@
 import { Logo } from "@components/Gnb/Logo";
+import { MenuSvg } from "@components/Gnb/MenuSvg";
+import { SearchSvg } from "@components/Gnb/SearchSvg";
 
 export const Gnb: React.FC = () => {
   const Menu: { label: string; href: string }[] = [
@@ -31,7 +33,7 @@ export const Gnb: React.FC = () => {
           <Logo />
         </a>
 
-        <nav className="flex flex-row w-full pr-[4rem]">
+        <nav className="hidden md:flex flex-row w-full pr-[4rem]">
           <ul className="list-none inline-block font-bold">
             {Menu.map((menu) => (
               <li key={menu.label} className=" inline-block">
@@ -44,14 +46,20 @@ export const Gnb: React.FC = () => {
         </nav>
 
         <div className="flex flex-row items-center justify-center gap-[1.2rem]">
-          <form>
+          <button className="lg:hidden">
+            <SearchSvg />
+          </button>
+          <form className="hidden lg:block">
             <input
               type="search"
               placeholder="물품이나 동네를 검색해보세요"
               className="w-[28.8rem] text-[1.6rem] py-[0.9rem] px-[1.2rem] h-[4rem] bg-gray-100 rounded-md"
             />
           </form>
-          <button className="text-[1.6rem] px-[1.6rem] py-[0.8rem] w-fit font-bold whitespace-nowrap rounded-md border-[1px] border-gray-400 hover:bg-gray-100 hover:opacity-[0.7]">
+          <button className="md:hidden">
+            <MenuSvg />
+          </button>
+          <button className="hidden md:block text-[1.6rem] px-[1.6rem] py-[0.8rem] w-fit font-bold whitespace-nowrap rounded-md border-[1px] border-gray-400 hover:bg-gray-100 hover:opacity-[0.7]">
             채팅하기
           </button>
         </div>
