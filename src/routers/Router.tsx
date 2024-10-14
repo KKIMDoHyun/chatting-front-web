@@ -3,6 +3,7 @@ import { Navigate, createBrowserRouter } from "react-router-dom";
 import { RootLayout } from "@routers/RootLayout";
 
 import { ChatPage } from "@pages/Chat";
+import { ErrorPage } from "@pages/Error";
 import { LoginPage } from "@pages/Login";
 import { SignUpPage } from "@pages/SignUp";
 
@@ -17,6 +18,7 @@ export const router = () =>
           <RootLayout />
         </AuthRoute>
       ),
+      errorElement: <ErrorPage />,
       children: [
         { index: true, element: <ChatPage /> },
         {

@@ -41,8 +41,12 @@ export const setInterceptors = (
         _retry?: boolean;
       };
 
-      if (status === 401 && AUTH_ERROR_CODES.has(data.errorCode)) {
-        if (data?.errorCode === "ACCESS_TOKEN_EXPIRED") {
+      if (
+        status === 401 &&
+        data.errorCode &&
+        AUTH_ERROR_CODES.has(data.errorCode)
+      ) {
+        if (data.errorCode === "ACCESS_TOKEN_EXPIRED") {
           return handleTokenRefresh(axiosInstance, originalRequest);
         } else {
           handleAuthError();

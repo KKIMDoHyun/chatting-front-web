@@ -5,7 +5,10 @@ import { Provider } from "jotai";
 
 import { router } from "@routers/Router";
 
+import ErrorBoundary from "@components/Error/ErrorBoundary";
 import { ModalProvider } from "@components/Modal/ModalProvider";
+
+import { ErrorPage } from "@pages/Error";
 
 import "./firebase";
 
@@ -18,7 +21,9 @@ export const App: React.FC = () => {
     <Provider>
       <QueryClientProvider client={queryClient}>
         <ModalProvider>
-          <RouterProvider router={router()} />
+          <ErrorBoundary fallback={<ErrorPage />}>
+            <RouterProvider router={router()} />
+          </ErrorBoundary>
         </ModalProvider>
       </QueryClientProvider>
     </Provider>
