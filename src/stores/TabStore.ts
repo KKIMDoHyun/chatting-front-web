@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 
-type TTabMenu = { label: "구성원" | "채팅방"; path: "user" | "room" };
+export type TTabMenu = { label: "구성원" | "채팅방"; path: "user" | "room" };
 
 export const TAB_MENU: TTabMenu[] = [
   { label: "구성원", path: "user" },

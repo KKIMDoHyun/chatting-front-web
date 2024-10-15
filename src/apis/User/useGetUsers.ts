@@ -8,7 +8,7 @@ import { TUser } from "@typings/User";
 
 type GetUsersReq = object;
 
-type GetUsersRes = Omit<TUser, "email">[];
+type GetUsersRes = TUser[];
 
 const getUsers = async () => {
   return await instance.get<GetUsersReq, GetUsersRes>("/users");
