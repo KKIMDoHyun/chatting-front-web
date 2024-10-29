@@ -30,7 +30,7 @@ export const MessageItem: React.FC<MessageItemProps> = React.memo(
         <SenderInfo
           displayProfile={displayProfile}
           isCurrentUser={isCurrentUser}
-          sender={message.sender}
+          senderId={message.senderId}
         />
         <MessageContent
           message={message}

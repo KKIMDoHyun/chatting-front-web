@@ -1,23 +1,28 @@
 import React, { useState } from "react";
 
 import dayjs from "dayjs";
+import { useAtomValue } from "jotai";
 
 import { TFile } from "@typings/Chat";
-import { TUser } from "@typings/User";
+
+import { RoomMemberHistoryAtom } from "@stores/RoomStore";
 
 type ImageViewModalProps = {
-  sender: Omit<TUser, "email">;
+  senderId: string;
   createdAt: string;
   file: TFile;
   closeModal: () => void;
 };
 
 export const ImageViewModal: React.FC<ImageViewModalProps> = ({
-  sender,
+  senderId,
   createdAt,
   file,
   closeModal,
 }: ImageViewModalProps) => {
+  const memberHistory = useAtomValue(RoomMemberHistoryAtom);
+  const memberInfo = memberHistory.find((member) => member.id === senderId);
+
   const [isDownloading, setIsDownloading] = useState(false);
 
   const handleSave = async () => {
@@ -48,7 +53,7 @@ export const ImageViewModal: React.FC<ImageViewModalProps> = ({
   return (
     <div className="flex h-fit max-h-[700px] w-[400px] flex-col items-center rounded-lg bg-white shadow-2xl">
       <div className="flex w-full flex-row items-center justify-center gap-3 border-b p-2">
-        <span className="font-bold">{sender.name}</span>
+        <span className="font-bold">{memberInfo?.name}</span>
         <span className="text-sm text-gray-600">
           {dayjs(createdAt).format("YYYY-MM-DD")}
         </span>

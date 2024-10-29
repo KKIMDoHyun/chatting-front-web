@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { useParams } from "react-router-dom";
 
@@ -23,7 +23,7 @@ import { MyInfoAtom } from "@stores/UserStore";
 import { MessageItem } from "./MessageItem";
 import { useChatRoomReadStatus } from "./useChatRoomReadStatus";
 
-export const ChatMessage: React.FC = () => {
+export const ChatMessage = () => {
   const { id: roomId } = useParams<{ id: string }>();
   const [messages, setMessages] = useState<TChatMessageDetail[]>([]);
   const myInfo = useAtomValue(MyInfoAtom);
@@ -93,11 +93,12 @@ export const ChatMessage: React.FC = () => {
             {groupedMessagesByUser.map((group) =>
               group.map((message, messageIndex) => {
                 const isLastInGroup = messageIndex === group.length - 1;
+                console.log("WEWW", message.senderId === myInfo?.id);
                 return (
                   <MessageItem
                     key={message.id}
                     message={message}
-                    isCurrentUser={message.sender.id === myInfo?.id}
+                    isCurrentUser={message.senderId === myInfo?.id}
                     displayProfile={checkDisplayProfile(
                       group,
                       message,

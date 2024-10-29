@@ -20,7 +20,7 @@ export const MessageContent = React.memo(
           return (
             <ImageMessage
               file={message.files[0]}
-              sender={message.sender}
+              senderId={message.senderId}
               createdAt={message.createdAt}
             />
           );

@@ -7,8 +7,8 @@ export const checkDisplayProfile = (
   index: number,
   currentUser: TUser | null
 ): boolean => {
-  if (currentMessage.sender.id === currentUser?.id) return false;
+  if (currentMessage.senderId === currentUser?.id) return false;
   if (index === 0) return true;
   const prevMessage = messages[index - 1];
-  return prevMessage.sender.id !== currentMessage.sender.id;
+  return prevMessage.senderId !== currentMessage.senderId;
 };

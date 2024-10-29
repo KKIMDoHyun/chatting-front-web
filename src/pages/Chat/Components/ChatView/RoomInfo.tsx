@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useParams } from "react-router-dom";
 
+import { useSetAtom } from "jotai";
 import { Archive } from "lucide-react";
 
 import LOGO from "@assets/chat-logo.png";
@@ -11,6 +12,8 @@ import { useGetRoomInfo } from "@apis/Room/useGetRoomInfo";
 import { QueryWrapper } from "@components/QueryWrapper";
 import { Button } from "@components/ui";
 
+import { RoomMemberHistoryAtom } from "@stores/RoomStore";
+
 import { TalkStorage } from "./TalkStorage";
 import { UsersInRoom } from "./UsersInRoom";
 
@@ -18,6 +21,13 @@ export const RoomInfo = () => {
   const { id: roomId } = useParams<{ id: string }>();
   const query = useGetRoomInfo({ roomId: roomId ?? "" });
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const setMemberHistory = useSetAtom(RoomMemberHistoryAtom);
+
+  useEffect(() => {
+    if (query.data) {
+      setMemberHistory(query.data.memberHistory);
+    }
+  }, [query.data, setMemberHistory]);
 
   return (
     <QueryWrapper query={query}>
@@ -39,7 +49,7 @@ export const RoomInfo = () => {
                   >
                     <Archive className="h-5 w-5" />
                   </Button>
-                  <UsersInRoom memberSize={data.memberSize} />
+                  <UsersInRoom memberSize={data.members.length} />
                 </div>
               </div>
             </div>

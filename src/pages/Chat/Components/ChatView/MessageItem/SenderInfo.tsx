@@ -1,26 +1,40 @@
-import { TUser } from "@typings/User";
+import { useAtomValue } from "jotai";
+
+import { RoomMemberHistoryAtom } from "@stores/RoomStore";
 
 type SenderInfoProps = {
   isCurrentUser: boolean;
   displayProfile: boolean;
-  sender: Omit<TUser, "email">;
+  senderId: string;
 };
 
 export const SenderInfo = ({
   isCurrentUser,
   displayProfile,
-  sender,
+  senderId,
 }: SenderInfoProps) => {
+  const memberHistory = useAtomValue(RoomMemberHistoryAtom);
+  const memberInfo = memberHistory.find((member) => member.id === senderId);
+
   return (
     <div className="flex items-center gap-2">
-      {/* TODO : 유저 프로필 이미지 넣기 */}
       {!isCurrentUser && displayProfile ? (
-        <div className="h-10 w-10 rounded-full bg-slate-400" />
+        <div className="h-10 w-10 overflow-hidden rounded-full bg-slate-400">
+          {memberInfo?.profileImageUrl && (
+            <img
+              src={memberInfo.profileImageUrl}
+              alt={`${memberInfo.name}'s profile`}
+              className="h-full w-full object-cover"
+            />
+          )}
+        </div>
       ) : (
         <div className="w-10" />
       )}
       {displayProfile && !isCurrentUser && (
-        <p className="mb-1 text-sm text-gray-600">{sender.name}</p>
+        <p className="mb-1 text-sm text-gray-600">
+          {memberInfo?.name || senderId}
+        </p>
       )}
     </div>
   );

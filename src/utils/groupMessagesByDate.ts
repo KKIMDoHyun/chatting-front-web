@@ -28,7 +28,7 @@ export const createGroupedMessageStructure = (
         const previousMessage = messagesOnDate[index - 1];
         const shouldStartNewGroup =
           !previousMessage ||
-          previousMessage.sender.id !== currentMessage.sender.id ||
+          previousMessage.senderId !== currentMessage.senderId ||
           dayjs(currentMessage.createdAt).format("HH:mm") !==
             dayjs(previousMessage.createdAt).format("HH:mm");
 

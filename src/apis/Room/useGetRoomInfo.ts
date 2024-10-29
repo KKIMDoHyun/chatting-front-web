@@ -4,6 +4,7 @@ import { instance } from "@apis/AxiosInstance";
 import { QUERY_KEYS } from "@apis/QUERY_KEYS";
 
 import { TErrorRes } from "@typings/Axios";
+import { TMember } from "@typings/User";
 
 type GetRoomInfoReq = {
   roomId: string;
@@ -12,9 +13,10 @@ type GetRoomInfoReq = {
 type GetRoomInfoRes = {
   id: string;
   name: string;
-  memberSize: number;
   createdAt: string;
   updatedAt: string;
+  members: TMember[];
+  memberHistory: TMember[];
 };
 
 const getRoomInfo = async (params: GetRoomInfoReq) => {

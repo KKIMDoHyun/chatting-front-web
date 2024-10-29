@@ -1,11 +1,9 @@
-import { TUser } from "@typings/User";
-
 export type TChatMessageDetail = {
   id: string;
   roomId: string;
   messageType: TMessageType;
   senderType: TSenderType;
-  sender: Omit<TUser, "email">;
+  senderId: string;
   createdAt: string;
   updatedAt: string;
   plainText: string;
