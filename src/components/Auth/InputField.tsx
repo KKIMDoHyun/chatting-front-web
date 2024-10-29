@@ -30,7 +30,7 @@ export const InputField = <TFieldValues extends FieldValues>({
   };
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <input
         className={`h-11 w-full rounded-xl bg-gray-200 px-4 ${className} ${
           isPassword ? "pr-10" : ""

@@ -9,7 +9,6 @@ type PostSignUpReq = {
   password: string;
   name: string;
   email: string;
-  profileImageUrl: string;
   phoneNumber: string;
 };
 

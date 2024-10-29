@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import LOGO from "@assets/chat-logo.png";
 
 import { usePostSignUp } from "@apis/Auth/usePostSignUp";
-import { useGetFileUrl } from "@apis/Chat/useGetFileUrl";
 
 import { TSignUpForm } from "@typings/Auth";
 
@@ -22,7 +21,6 @@ export const SignUpPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState(0);
   const { mutate: signUpMutate } = usePostSignUp();
-  const { mutateAsync: getFileUrlMutate } = useGetFileUrl();
   const { showCustomModal, closeCustomModal } = useModal();
 
   const methods = useForm<TSignUpForm>({
@@ -32,8 +30,6 @@ export const SignUpPage: React.FC = () => {
       confirmPassword: "",
       name: "",
       email: "",
-      profileImage: null,
-      profileImageUrl: "",
       phoneNumber: "010",
     },
   });
@@ -45,26 +41,8 @@ export const SignUpPage: React.FC = () => {
     });
   };
 
-  const handleFileUpload = async (file: File) => {
-    try {
-      const res = await getFileUrlMutate({
-        fileName: file.name,
-        fileSize: file.size,
-        contentType: file.type,
-        metadata: new Map(),
-      });
-      methods.setValue("profileImageUrl", res.preSignedUrl);
-    } catch (err) {
-      console.error(err);
-      showErrorModal();
-    }
-  };
-
   const onSubmit: SubmitHandler<TSignUpForm> = async (data) => {
     setIsLoading(true);
-    if (data.profileImage) {
-      await handleFileUpload(data.profileImage);
-    }
 
     signUpMutate(
       {
@@ -72,7 +50,6 @@ export const SignUpPage: React.FC = () => {
         password: data.password,
         name: data.name,
         email: data.email,
-        profileImageUrl: data.profileImageUrl,
         phoneNumber: data.phoneNumber,
       },
       {
@@ -98,14 +75,11 @@ export const SignUpPage: React.FC = () => {
 
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center">
-      {step === 0 && (
-        <>
-          <div className="mb-3 flex justify-center">
-            <img src={LOGO} width={200} height={200} alt="Logo" />
-          </div>
-          <h2 className="mb-4 text-center text-xl font-bold">회원가입</h2>
-        </>
-      )}
+      <div className="mb-3 flex justify-center">
+        <img src={LOGO} width={200} height={200} alt="Logo" />
+      </div>
+      <h2 className="mb-4 text-center text-xl font-bold">회원가입</h2>
+
       <FormProvider {...methods}>
         <form
           onSubmit={methods.handleSubmit(onSubmit)}
@@ -118,6 +92,7 @@ export const SignUpPage: React.FC = () => {
           )}
         </form>
       </FormProvider>
+
       <p className="mt-4 text-center text-sm">
         이미 계정이 있으신가요?{" "}
         <a href="/login" className="text-blue-500 hover:underline">

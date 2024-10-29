@@ -3,7 +3,6 @@ import { Button } from "@components/ui";
 import { EmailForm } from "./EmailForm";
 import { NameForm } from "./NameForm";
 import { PhoneNumberForm } from "./PhoneNumberForm";
-import { ProfileImageForm } from "./ProfileImageForm";
 
 type StepTwoProps = {
   setStep: React.Dispatch<React.SetStateAction<number>>;
@@ -18,11 +17,11 @@ export const StepTwo = ({ setStep, isLoading }: StepTwoProps) => {
   return (
     <div className="flex w-[350px] flex-col">
       <div className="flex flex-col gap-2">
-        <ProfileImageForm />
         <NameForm />
         <EmailForm />
         <PhoneNumberForm />
       </div>
+
       <div className="mt-5 space-y-2">
         <Button type="button" className="w-full" onClick={handlePrevStep}>
           이전

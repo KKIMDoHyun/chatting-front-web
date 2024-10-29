@@ -26,7 +26,6 @@ export const PasswordConfirmForm = () => {
             value === password || "비밀번호가 일치하지 않습니다.",
         }}
         isPassword
-        className="w-full"
       />
       {errors.confirmPassword && (
         <p className="mt-1 text-xs text-red-500">

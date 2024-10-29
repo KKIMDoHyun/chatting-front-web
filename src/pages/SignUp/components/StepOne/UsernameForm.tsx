@@ -20,7 +20,6 @@ export const UsernameForm = () => {
           type="text"
           register={register}
           validation={{ required: "아이디를 입력해주세요." }}
-          className="w-full"
         />
         <Button type="button">중복 검사</Button>
       </div>
