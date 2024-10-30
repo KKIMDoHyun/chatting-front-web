@@ -25,7 +25,8 @@ export const UserInfo = () => {
       displayComponent: (
         <LogoutModal closeModal={closeCustomModal} navigate={navigate} />
       ),
-      isBackDrop: true,
+      isShowClose: false,
+      isBackDrop: false,
     });
   };
 

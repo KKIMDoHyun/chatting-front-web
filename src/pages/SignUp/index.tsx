@@ -37,7 +37,7 @@ export const SignUpPage: React.FC = () => {
   const showErrorModal = () => {
     showCustomModal({
       displayComponent: <SignUpErrorModal closeModal={closeCustomModal} />,
-      isBackDrop: false,
+      isShowClose: false,
     });
   };
 
@@ -62,6 +62,7 @@ export const SignUpPage: React.FC = () => {
                 navigate={navigate}
               />
             ),
+            isShowClose: false,
             isBackDrop: false,
           });
         },

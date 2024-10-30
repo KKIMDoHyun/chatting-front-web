@@ -27,7 +27,6 @@ export const EmptyRoomList = () => {
                 navigate={navigate}
               />
             ),
-            isBackDrop: true,
           });
         }}
       >

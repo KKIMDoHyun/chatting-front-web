@@ -27,7 +27,6 @@ export const SearchAndAddRoom = ({ navigate }: SearchAndAddRoomProps) => {
                 navigate={navigate}
               />
             ),
-            isBackDrop: true,
           });
         }}
       >

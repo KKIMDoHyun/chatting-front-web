@@ -31,7 +31,6 @@ export const UsersInRoom = ({ memberSize }: UsersInRoomProps) => {
       displayComponent: (
         <InviteUserModal closeModal={closeCustomModal} roomId={id ?? ""} />
       ),
-      isBackDrop: true,
     });
   };
 

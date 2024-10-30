@@ -32,6 +32,7 @@ export const ImageCard: React.FC<ImageCardProps> = ({
           closeModal={closeCustomModal}
         />
       ),
+      isShowClose: false,
     });
   };
 

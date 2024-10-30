@@ -32,7 +32,7 @@ export const RoomPopover = ({
           navigate={navigate}
         />
       ),
-      isBackDrop: true,
+      isShowClose: false,
     });
   };
 

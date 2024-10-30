@@ -27,6 +27,7 @@ export const ImageMessage = ({
           closeModal={closeCustomModal}
         />
       ),
+      isShowClose: false,
     });
   };
 

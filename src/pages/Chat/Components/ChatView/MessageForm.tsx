@@ -105,10 +105,8 @@ export const MessageForm = () => {
                     preSignedUrl={data.preSignedUrl}
                   />
                 ),
-                isBackDrop: false,
               });
             }
-            console.log(data);
           },
         }
       );
