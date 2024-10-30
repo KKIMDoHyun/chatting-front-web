@@ -93,7 +93,7 @@ export const ChatMessage = () => {
             {groupedMessagesByUser.map((group) =>
               group.map((message, messageIndex) => {
                 const isLastInGroup = messageIndex === group.length - 1;
-                console.log("WEWW", message.senderId === myInfo?.id);
+
                 return (
                   <MessageItem
                     key={message.id}

@@ -16,7 +16,6 @@ export const useChatRoomReadStatus = (
     if (prevRoomIdRef.current !== null && prevRoomIdRef.current !== roomId) {
       // 이전 채팅방에서 나가는 경우
       if (messages.length > 0) {
-        console.log("나가요", prevRoomIdRef.current);
         checkRead({ roomId: prevRoomIdRef.current });
       }
     }
