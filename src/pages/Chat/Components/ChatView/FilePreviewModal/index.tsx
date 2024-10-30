@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 
+import { FileIcon, defaultStyles } from "react-file-icon";
+
 import axios from "axios";
-import {
-  File,
-  FileIcon,
-  FileSpreadsheet,
-  FileText,
-  ImageIcon,
-} from "lucide-react";
+import mime from "mime-types";
+
+import { isValidExtension } from "@utils/isValidExtension";
 
 type FilePreviewModalProps = {
   file: File;
@@ -44,35 +42,13 @@ export const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
     }
   }, [file]);
 
-  const formatFileName = (name: string) => {
-    if (name.length <= 20) return name;
-    const ext = name.split(".").pop();
-    const nameWithoutExt = name.slice(0, name.lastIndexOf("."));
-    return `${nameWithoutExt.slice(0, 8)}...${nameWithoutExt.slice(-8)}.${ext}`;
-  };
-
   const formatFileSize = (size: number) => {
     const kbSize = size / 1024;
     return `${kbSize.toFixed(2)} KB`;
   };
 
-  const getFileIcon = (fileType: string) => {
-    if (fileType.startsWith("image/")) return ImageIcon;
-    if (fileType === "application/pdf") return FileIcon;
-    if (
-      fileType ===
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    )
-      return FileText;
-    if (
-      fileType ===
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
-      return FileSpreadsheet;
-    return File;
-  };
-
-  const FileTypeIcon = getFileIcon(file.type);
+  const extension = mime.extension(file.type);
+  const validExtension = isValidExtension(extension) ? extension : "txt";
 
   return (
     <div className="flex w-[400px] flex-col items-center rounded-lg bg-white p-8 shadow-2xl">
@@ -87,11 +63,16 @@ export const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
                 className="h-full w-full object-cover"
               />
             ) : (
-              <FileTypeIcon size={48} className="text-gray-400" />
+              <div className="w-20">
+                <FileIcon
+                  extension={validExtension}
+                  {...defaultStyles[validExtension]}
+                />
+              </div>
             )}
           </div>
-          <div className="text-center">
-            <p className="font-medium">{formatFileName(file.name)}</p>
+          <div className="space-y-2 text-center">
+            <p className="font-medium">{file.name}</p>
             <p className="text-sm text-gray-500">{formatFileSize(file.size)}</p>
           </div>
         </div>

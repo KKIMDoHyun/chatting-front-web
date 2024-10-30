@@ -1,9 +1,11 @@
 import { useCallback } from "react";
 
-import { DefaultExtensionType, FileIcon, defaultStyles } from "react-file-icon";
+import { FileIcon, defaultStyles } from "react-file-icon";
 
 import { Download } from "lucide-react";
 import mime from "mime-types";
+
+import { isValidExtension } from "@utils/isValidExtension";
 
 import { TFile } from "@typings/Chat";
 
@@ -22,11 +24,6 @@ export const FileMessage = ({ file }: FileMessageProps) => {
     link.click();
     document.body.removeChild(link);
   }, [file]);
-  const isValidExtension = (
-    extension: string | false
-  ): extension is DefaultExtensionType => {
-    return typeof extension === "string" && extension in defaultStyles;
-  };
 
   const extension = mime.extension(file.mimeType);
   const validExtension = isValidExtension(extension) ? extension : "txt";
