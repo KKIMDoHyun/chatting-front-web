@@ -27,8 +27,9 @@ export const ImageTab = ({ roomId }: ImageTabProps) => {
                     className="relative aspect-square overflow-hidden rounded-md shadow-md transition-shadow hover:shadow-lg"
                   >
                     <ImageCard
-                      src={file.url}
-                      alt={file.name}
+                      file={file}
+                      senderId={content.senderId}
+                      createdAt={content.createdAt}
                       className="transition-transform duration-300 hover:scale-110"
                     />
                     <div className="absolute bottom-0 left-0 right-0 truncate bg-black bg-opacity-50 p-1 text-sm text-white">

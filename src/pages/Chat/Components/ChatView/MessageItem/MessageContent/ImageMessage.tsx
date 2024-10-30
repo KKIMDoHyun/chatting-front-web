@@ -1,5 +1,3 @@
-import { useCallback } from "react";
-
 import { TFile } from "@typings/Chat";
 
 import { useModal } from "@components/Modal/useModal";
@@ -19,7 +17,7 @@ export const ImageMessage = ({
 }: ItemMessageProps) => {
   const { showCustomModal, closeCustomModal } = useModal();
 
-  const handleImageClick = useCallback(() => {
+  const handleImageClick = () => {
     showCustomModal({
       displayComponent: (
         <ImageViewModal
@@ -30,7 +28,7 @@ export const ImageMessage = ({
         />
       ),
     });
-  }, [showCustomModal, senderId, createdAt, file, closeCustomModal]);
+  };
 
   return (
     <img

@@ -1,17 +1,39 @@
 import { useState } from "react";
 
+import { TFile } from "@typings/Chat";
+
+import { useModal } from "@components/Modal/useModal";
+
+import { ImageViewModal } from "../../MessageItem/MessageContent/ImageViewModal";
+
 type ImageCardProps = {
-  src: string;
-  alt: string;
+  file: TFile;
   className?: string;
+  senderId: string;
+  createdAt: string;
 };
 
 export const ImageCard: React.FC<ImageCardProps> = ({
-  src,
-  alt,
+  file,
   className,
+  senderId,
+  createdAt,
 }) => {
   const [isLoading, setIsLoading] = useState(true);
+  const { showCustomModal, closeCustomModal } = useModal();
+
+  const handleImageClick = () => {
+    showCustomModal({
+      displayComponent: (
+        <ImageViewModal
+          senderId={senderId}
+          createdAt={createdAt}
+          file={file}
+          closeModal={closeCustomModal}
+        />
+      ),
+    });
+  };
 
   const handleLoad = () => {
     setIsLoading(false);
@@ -24,11 +46,13 @@ export const ImageCard: React.FC<ImageCardProps> = ({
           <span className="text-gray-500">Loading...</span>
         </div>
       )}
+
       <img
-        src={src}
-        alt={alt}
+        onClick={handleImageClick}
+        src={file.url}
+        alt={file.name}
         onLoad={handleLoad}
-        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${
+        className={`absolute inset-0 h-full w-full cursor-pointer object-cover transition-opacity duration-300 ${
           isLoading ? "opacity-0" : "opacity-100"
         }`}
       />
