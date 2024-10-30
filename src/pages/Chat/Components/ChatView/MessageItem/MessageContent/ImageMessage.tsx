@@ -6,7 +6,7 @@ import { useModal } from "@components/Modal/useModal";
 
 import { ImageViewModal } from "./ImageViewModal";
 
-type ItemMessageeProps = {
+type ItemMessageProps = {
   file: TFile;
   senderId: string;
   createdAt: string;
@@ -16,7 +16,7 @@ export const ImageMessage = ({
   file,
   senderId,
   createdAt,
-}: ItemMessageeProps) => {
+}: ItemMessageProps) => {
   const { showCustomModal, closeCustomModal } = useModal();
 
   const handleImageClick = useCallback(() => {
@@ -36,8 +36,8 @@ export const ImageMessage = ({
     <img
       onClick={handleImageClick}
       src={file.url}
-      alt="Sent image"
-      className="max-h-[200px] max-w-[200px] cursor-pointer rounded-lg object-contain"
+      alt={`${file.name}`}
+      className="max-h-[250px] min-h-[100px] min-w-[100px] max-w-[250px] cursor-pointer rounded-lg border object-cover"
     />
   );
 };
