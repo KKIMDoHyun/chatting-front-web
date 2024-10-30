@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 
 import { useSetAtom } from "jotai";
 import { Archive } from "lucide-react";
@@ -28,6 +28,10 @@ export const RoomInfo = () => {
       setMemberHistory(query.data.memberHistory);
     }
   }, [query.data, setMemberHistory]);
+
+  if (!roomId) {
+    return <Navigate to="/room" replace />;
+  }
 
   return (
     <QueryWrapper query={query}>
@@ -57,6 +61,7 @@ export const RoomInfo = () => {
 
           {/* 톡서랍 */}
           <TalkStorage
+            roomId={roomId}
             isDrawerOpen={isDrawerOpen}
             setIsDrawerOpen={setIsDrawerOpen}
           />

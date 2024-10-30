@@ -2,6 +2,7 @@ import { useGetImages } from "@apis/Room/useGetImages";
 
 import { QueryWrapper } from "@components/QueryWrapper";
 
+import { NoContentMessage } from "../NoContentMessage";
 import { VideoCard } from "./VideoCard";
 
 type VideoTabProps = {
@@ -16,13 +17,11 @@ export const VideoTab = ({ roomId }: VideoTabProps) => {
       {(data) => (
         <>
           {data.contents.length === 0 ? (
-            <div className="flex h-full items-center justify-center">
-              <p className="text-gray-500">동영상이 없습니다.</p>
-            </div>
+            <NoContentMessage message="동영상이 없습니다." />
           ) : (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
-              {data.contents.flatMap((message) =>
-                message.files.map((file) => (
+              {data.contents.flatMap((content) =>
+                content.files.map((file) => (
                   <div
                     key={file.url}
                     className="relative aspect-square overflow-hidden rounded-md shadow-md transition-shadow hover:shadow-lg"

@@ -1,11 +1,5 @@
-import { useParams } from "react-router-dom";
-
-import { X } from "lucide-react";
-
 import {
-  Button,
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
@@ -16,22 +10,23 @@ import {
   TabsTrigger,
 } from "@components/ui";
 
+import { CloseButton } from "./CloseButton";
 import { FileTab } from "./FileTab";
 import { ImageTab } from "./ImageTab";
 import { NoticeTab } from "./NoticeTab";
 import { VideoTab } from "./VideoTab";
 
 type TalkStorageProps = {
+  roomId: string;
   isDrawerOpen: boolean;
   setIsDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const TalkStorage = ({
+  roomId,
   isDrawerOpen,
   setIsDrawerOpen,
 }: TalkStorageProps) => {
-  const { id: roomId } = useParams<{ id: string }>();
-
   return (
     <Drawer
       direction="right"
@@ -61,26 +56,20 @@ export const TalkStorage = ({
           </TabsList>
 
           <TabsContent value="images" className="h-full overflow-auto p-2">
-            <ImageTab roomId={roomId ?? ""} />
+            <ImageTab roomId={roomId} />
           </TabsContent>
           <TabsContent value="videos" className="h-full overflow-auto p-2">
-            <VideoTab roomId={roomId ?? ""} />
+            <VideoTab roomId={roomId} />
           </TabsContent>
           <TabsContent value="files" className="h-full overflow-auto p-2">
-            <FileTab roomId={roomId ?? ""} />
+            <FileTab roomId={roomId} />
           </TabsContent>
           <TabsContent value="notices" className="h-full overflow-auto p-2">
-            <NoticeTab roomId={roomId ?? ""} />
+            <NoticeTab roomId={roomId} />
           </TabsContent>
         </Tabs>
 
-        {isDrawerOpen && (
-          <DrawerClose asChild className="absolute -left-12 top-2">
-            <Button variant="secondary" size="icon">
-              <X className="h-5 w-5" />
-            </Button>
-          </DrawerClose>
-        )}
+        {isDrawerOpen && <CloseButton />}
       </DrawerContent>
     </Drawer>
   );

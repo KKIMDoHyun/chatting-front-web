@@ -2,6 +2,7 @@ import { useGetImages } from "@apis/Room/useGetImages";
 
 import { QueryWrapper } from "@components/QueryWrapper";
 
+import { NoContentMessage } from "../NoContentMessage";
 import { FileCard } from "./FileCard";
 
 type FileTabProps = {
@@ -16,13 +17,11 @@ export const FileTab = ({ roomId }: FileTabProps) => {
       {(data) => (
         <>
           {data.contents.length === 0 ? (
-            <div className="flex h-full items-center justify-center">
-              <p className="text-gray-500">파일이 없습니다.</p>
-            </div>
+            <NoContentMessage message="파일이 없습니다." />
           ) : (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-2">
-              {data.contents.flatMap((message) =>
-                message.files.map((file) => (
+              {data.contents.flatMap((content) =>
+                content.files.map((file) => (
                   <FileCard key={file.url} file={file} />
                 ))
               )}
