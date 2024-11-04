@@ -1,4 +1,6 @@
-import { useGetImages } from "@apis/Room/useGetImages";
+import { useGetTypedMessages } from "@apis/Chat/useGetTypedMessages";
+
+import { TFile } from "@typings/Chat";
 
 import { QueryWrapper } from "@components/QueryWrapper";
 
@@ -10,38 +12,56 @@ type ImageTabProps = {
 };
 
 export const ImageTab = ({ roomId }: ImageTabProps) => {
-  const query = useGetImages({ roomId, page: 0, messageType: "IMAGE" });
+  const query = useGetTypedMessages({
+    roomId,
+    messageType: "IMAGE",
+    page: 0,
+    size: 10000,
+  });
 
   return (
     <QueryWrapper query={query}>
-      {(data) => (
-        <>
-          {data.contents.length === 0 ? (
-            <NoContentMessage message="이미지가 없습니다." />
-          ) : (
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
-              {data.contents.flatMap((content) =>
-                content.files.map((file) => (
-                  <div
-                    key={file.url}
-                    className="relative aspect-square overflow-hidden rounded-md shadow-md transition-shadow hover:shadow-lg"
-                  >
-                    <ImageCard
-                      file={file}
-                      senderId={content.senderId}
-                      createdAt={content.createdAt}
-                      className="transition-transform duration-300 hover:scale-110"
-                    />
-                    <div className="absolute bottom-0 left-0 right-0 truncate bg-black bg-opacity-50 p-1 text-sm text-white">
-                      {file.name}
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          )}
-        </>
-      )}
+      {(data) => {
+        const allFiles = data.content.reduce<
+          Array<{
+            file: TFile;
+            senderId: string;
+            createdAt: string;
+          }>
+        >((acc, message) => {
+          const messageFiles = message.files.map((file) => ({
+            file,
+            senderId: message.senderId,
+            createdAt: message.createdAt,
+          }));
+          return [...acc, ...messageFiles];
+        }, []);
+
+        if (!allFiles?.length) {
+          return <NoContentMessage message="이미지가 없습니다." />;
+        }
+
+        return (
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+            {allFiles.map(({ file, senderId, createdAt }) => (
+              <div
+                key={file.url}
+                className="relative aspect-square overflow-hidden rounded-md shadow-md transition-shadow hover:shadow-lg"
+              >
+                <ImageCard
+                  file={file}
+                  senderId={senderId}
+                  createdAt={createdAt}
+                  className="transition-transform duration-300 hover:scale-110"
+                />
+                <div className="absolute bottom-0 left-0 right-0 truncate bg-black bg-opacity-50 p-1 text-sm text-white">
+                  {file.name}
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+      }}
     </QueryWrapper>
   );
 };

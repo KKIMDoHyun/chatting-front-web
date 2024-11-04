@@ -1,4 +1,6 @@
-import { useGetImages } from "@apis/Room/useGetImages";
+import { useGetTypedMessages } from "@apis/Chat/useGetTypedMessages";
+
+import { TFile } from "@typings/Chat";
 
 import { QueryWrapper } from "@components/QueryWrapper";
 
@@ -10,25 +12,32 @@ type FileTabProps = {
 };
 
 export const FileTab = ({ roomId }: FileTabProps) => {
-  const query = useGetImages({ roomId, page: 0, messageType: "FILE" });
+  const query = useGetTypedMessages({
+    roomId,
+    page: 0,
+    messageType: "FILE",
+    size: 10000,
+  });
 
   return (
     <QueryWrapper query={query}>
-      {(data) => (
-        <>
-          {data.contents.length === 0 ? (
-            <NoContentMessage message="파일이 없습니다." />
-          ) : (
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-2">
-              {data.contents.flatMap((content) =>
-                content.files.map((file) => (
-                  <FileCard key={file.url} file={file} />
-                ))
-              )}
-            </div>
-          )}
-        </>
-      )}
+      {(data) => {
+        const allFiles = data.content.reduce<TFile[]>((acc, content) => {
+          return [...acc, ...content.files];
+        }, []);
+
+        if (!allFiles.length) {
+          return <NoContentMessage message="파일이 없습니다." />;
+        }
+
+        return (
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-2">
+            {allFiles.map((file) => (
+              <FileCard key={file.url} file={file} />
+            ))}
+          </div>
+        );
+      }}
     </QueryWrapper>
   );
 };

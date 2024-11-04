@@ -11,6 +11,8 @@ export type TChatMessageDetail = {
   options: string[];
   reactions: string[];
   replyTo: string | null;
+  isDeleted: boolean;
+  isNotice: boolean;
 };
 
 export type TFile = {
@@ -20,15 +22,12 @@ export type TFile = {
   url: string;
 };
 
-export type TLastMessage = {
-  id: string;
-  messageType: TMessageType;
-  senderType: TSenderType;
-  senderId: string;
-  createdAt: string;
-  plainText: string;
-};
-export type TMessageType = "TEXT" | "IMAGE" | "FILE";
+export type TLastMessage = Pick<
+  TChatMessageDetail,
+  "id" | "messageType" | "senderType" | "senderId" | "createdAt" | "plainText"
+>;
+
+export type TMessageType = "TEXT" | "IMAGE" | "VIDEO" | "FILE";
 export type TSenderType = "USER" | "SYSTEM";
 
 export type TTalkStorage = {

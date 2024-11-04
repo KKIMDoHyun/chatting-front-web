@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
 import { useAtomValue } from "jotai";
 
-import { useGetMessages } from "@apis/Chat/useGetMessages";
+import { useGetInitialMessages } from "@apis/Chat/useGetInitialMessages";
 
 import { changeDate } from "@utils/changeDate";
 import { checkDisplayProfile } from "@utils/checkDisplayProfile";
@@ -28,39 +28,15 @@ export const ChatMessage = () => {
   const [messages, setMessages] = useState<TChatMessageDetail[]>([]);
   const myInfo = useAtomValue(MyInfoAtom);
 
-  const { data, fetchPreviousMessages } = useGetMessages({
+  const { data } = useGetInitialMessages({
     roomId: roomId ?? "",
-    direction: "before",
-    messageId: null,
   });
 
-  // 새로운 훅 사용
   useChatRoomReadStatus(roomId ?? "", messages);
 
-  const loadPreviousMessages = useCallback(async () => {
-    if (data?.hasPreviousMessages && messages.length > 0) {
-      prevScrollHeightRef.current = containerRef.current?.scrollHeight ?? 0;
-      fetchPreviousMessages(messages[0].id);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data?.hasPreviousMessages, messages, fetchPreviousMessages]);
-
-  const { containerRef, prevScrollHeightRef } = useScrollHandler({
+  const { containerRef } = useScrollHandler({
     messages,
-    loadPreviousMessages,
-    hasPreviousMessages: data?.hasPreviousMessages,
   });
-
-  useEffect(() => {
-    if (data) {
-      const allMessages = [
-        ...(data.beforeMessages ?? []),
-        ...(data.standardMessage ? [data.standardMessage] : []),
-        ...(data.afterMessages ?? []),
-      ];
-      setMessages(allMessages);
-    }
-  }, [data]);
 
   const handleNewMessage = useCallback(
     (data: CallbackProps) => {
@@ -76,6 +52,13 @@ export const ChatMessage = () => {
     },
     [roomId]
   );
+
+  useEffect(() => {
+    if (data) {
+      const allMessages = [...data.messages.content];
+      setMessages(allMessages);
+    }
+  }, [data]);
 
   useWebSocketSubscription("MESSAGE_CREATED", handleNewMessage);
 
@@ -105,7 +88,7 @@ export const ChatMessage = () => {
                       messageIndex,
                       myInfo
                     )}
-                    isStandardMessage={message.id === data?.standardMessage?.id}
+                    // isStandardMessage={message.id === data?.standardMessage?.id}
                     timeValue={changeDate(dayjs(message.createdAt))}
                     showTime={isLastInGroup}
                   />

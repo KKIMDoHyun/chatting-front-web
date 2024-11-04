@@ -5,6 +5,7 @@ import { QUERY_KEYS } from "@apis/QUERY_KEYS";
 
 import { TErrorRes } from "@typings/Axios";
 import { TChatMessageDetail } from "@typings/Chat";
+import { TPage } from "@typings/Page";
 
 type GetMessagesReq = {
   roomId: string;
@@ -12,18 +13,14 @@ type GetMessagesReq = {
   direction: "before" | "after";
 };
 
-type GetMessagesRes = {
-  beforeMessages: TChatMessageDetail[];
-  afterMessages: TChatMessageDetail[];
-  standardMessage: TChatMessageDetail;
-  hasPreviousMessages: boolean;
-  hasNextMessages: boolean;
+type GetMessagesRes = TPage & {
+  content: TChatMessageDetail[];
 };
 
 const getMessages = async (params: GetMessagesReq) => {
   const { roomId, messageId, direction } = params;
   return await instance.get<GetMessagesReq, GetMessagesRes>(
-    `/rooms/${roomId}/latest-messages`,
+    `/rooms/${roomId}/messages`,
     { params: { messageId, direction } }
   );
 };
@@ -50,8 +47,8 @@ export const useGetMessages = (initialParams: GetMessagesReq) => {
           if (!oldData) return data;
           return {
             ...oldData,
-            beforeMessages: [...data.beforeMessages, ...oldData.beforeMessages],
-            hasPreviousMessages: data.hasPreviousMessages,
+            // beforeMessages: [...data.beforeMessages, ...oldData.beforeMessages],
+            // hasPreviousMessages: data.hasPreviousMessages,
           };
         }
       );

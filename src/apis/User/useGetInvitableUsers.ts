@@ -4,13 +4,13 @@ import { instance } from "@apis/AxiosInstance";
 import { QUERY_KEYS } from "@apis/QUERY_KEYS";
 
 import { TErrorRes } from "@typings/Axios";
-import { TUser } from "@typings/User";
+import { TMember } from "@typings/User";
 
 type GetInvitableUsersReq = {
   roomId: string;
 };
 
-type GetInvitableUsersRes = Omit<TUser, "email">[];
+type GetInvitableUsersRes = TMember[];
 
 const invitableUsers = async (params: GetInvitableUsersReq) => {
   const { roomId } = params;
