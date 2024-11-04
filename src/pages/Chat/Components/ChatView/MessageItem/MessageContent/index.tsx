@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
+
+import { Pin } from "lucide-react";
 
 import { TChatMessageDetail } from "@typings/Chat";
 
@@ -12,8 +14,11 @@ type MessageContentProps = {
   timeValue: string;
   showTime: boolean;
 };
+
 export const MessageContent = React.memo(
   ({ message, isCurrentUser, showTime, timeValue }: MessageContentProps) => {
+    const [isHovered, setIsHovered] = useState(false);
+
     const renderMessage = () => {
       switch (message.messageType) {
         case "IMAGE":
@@ -36,18 +41,31 @@ export const MessageContent = React.memo(
       }
     };
 
+    const handleNoticeClick = (e: React.MouseEvent) => {
+      e.stopPropagation();
+    };
+
     return (
       <div
-        className={`flex items-end ${
+        className={`group relative flex ${
           isCurrentUser ? "flex-row-reverse" : "flex-row"
         } gap-2`}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
-        <div
-          className={`flex ${
-            isCurrentUser ? "items-end" : "ml-12 items-start"
-          }`}
-        >
+        <div className={`flex items-end ${!isCurrentUser && "ml-12"}`}>
           {renderMessage()}
+
+          {isHovered && (
+            <button
+              onClick={handleNoticeClick}
+              className={`flex h-6 w-6 items-center justify-center text-gray-600 opacity-0 transition-opacity hover:rounded-full hover:bg-gray-200 group-hover:opacity-100 ${
+                isCurrentUser ? "order-first mr-1" : "order-last ml-1"
+              }`}
+            >
+              <Pin size={10} />
+            </button>
+          )}
         </div>
 
         {showTime && (
