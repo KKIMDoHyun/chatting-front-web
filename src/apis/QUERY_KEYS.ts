@@ -42,8 +42,8 @@ export const QUERY_KEYS = {
       "messages",
       params,
     ],
-
     create: () => [...QUERY_KEYS.CHAT.all(), "create"],
+    createNotice: () => [...QUERY_KEYS.CHAT.all(), "create_notice"],
   },
   TALK_STORAGE: {
     all: () => ["talk_storage"],

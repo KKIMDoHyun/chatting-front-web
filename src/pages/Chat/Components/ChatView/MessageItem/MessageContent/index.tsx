@@ -4,6 +4,9 @@ import { Pin } from "lucide-react";
 
 import { TChatMessageDetail } from "@typings/Chat";
 
+import { useModal } from "@components/Modal/useModal";
+
+import { CreateNoticeModal } from "./CreateNoticeModal";
 import { FileMessage } from "./FileMessage";
 import { ImageMessage } from "./ImageMessage";
 import { TextMessage } from "./TextMessage";
@@ -13,12 +16,19 @@ type MessageContentProps = {
   isCurrentUser: boolean;
   timeValue: string;
   showTime: boolean;
+  roomId: string;
 };
 
 export const MessageContent = React.memo(
-  ({ message, isCurrentUser, showTime, timeValue }: MessageContentProps) => {
+  ({
+    message,
+    isCurrentUser,
+    showTime,
+    timeValue,
+    roomId,
+  }: MessageContentProps) => {
     const [isHovered, setIsHovered] = useState(false);
-
+    const { showCustomModal, closeCustomModal } = useModal();
     const renderMessage = () => {
       switch (message.messageType) {
         case "IMAGE":
@@ -43,6 +53,16 @@ export const MessageContent = React.memo(
 
     const handleNoticeClick = (e: React.MouseEvent) => {
       e.stopPropagation();
+      showCustomModal({
+        displayComponent: (
+          <CreateNoticeModal
+            roomId={roomId}
+            messageId={message.id}
+            closeModal={closeCustomModal}
+          />
+        ),
+        isShowClose: false,
+      });
     };
 
     return (

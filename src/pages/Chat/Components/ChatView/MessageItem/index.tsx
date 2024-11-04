@@ -11,12 +11,13 @@ type MessageItemProps = {
   isCurrentUser: boolean;
   displayProfile: boolean;
   // isStandardMessage: boolean;
+  roomId: string;
   timeValue: string;
   showTime: boolean;
 };
 
 export const MessageItem: React.FC<MessageItemProps> = React.memo(
-  ({ message, isCurrentUser, displayProfile, timeValue, showTime }) => {
+  ({ message, isCurrentUser, displayProfile, timeValue, showTime, roomId }) => {
     if (message.senderType === "SYSTEM") {
       return <SystemMessage plainText={message.plainText} />;
     }
@@ -34,6 +35,7 @@ export const MessageItem: React.FC<MessageItemProps> = React.memo(
         />
         <MessageContent
           message={message}
+          roomId={roomId}
           isCurrentUser={isCurrentUser}
           timeValue={timeValue}
           showTime={showTime}

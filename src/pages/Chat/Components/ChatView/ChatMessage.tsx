@@ -62,6 +62,8 @@ export const ChatMessage = () => {
 
   useWebSocketSubscription("MESSAGE_CREATED", handleNewMessage);
 
+  if (!roomId) return;
+
   return (
     <div
       ref={containerRef}
@@ -88,6 +90,7 @@ export const ChatMessage = () => {
                       messageIndex,
                       myInfo
                     )}
+                    roomId={roomId}
                     // isStandardMessage={message.id === data?.standardMessage?.id}
                     timeValue={changeDate(dayjs(message.createdAt))}
                     showTime={isLastInGroup}
