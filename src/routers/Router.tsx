@@ -21,20 +21,8 @@ export const router = () =>
       errorElement: <ErrorPage />,
       children: [
         { index: true, element: <ChatPage /> },
-        {
-          path: "user",
-          children: [
-            { index: true, element: <ChatPage /> },
-            { path: ":id", element: <ChatPage /> },
-          ],
-        },
-        {
-          path: "room",
-          children: [
-            { index: true, element: <ChatPage /> },
-            { path: ":id", element: <ChatPage /> },
-          ],
-        },
+        { path: "user/:id?", element: <ChatPage /> },
+        { path: "room/:id?", element: <ChatPage /> },
       ],
     },
     { path: "login", element: <LoginPage /> },
