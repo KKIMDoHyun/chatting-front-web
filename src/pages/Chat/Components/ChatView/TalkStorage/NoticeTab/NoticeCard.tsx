@@ -1,63 +1,82 @@
-import { useState } from "react";
+import { FileIcon, defaultStyles } from "react-file-icon";
 
-type NoticeCardProps = React.ImgHTMLAttributes<HTMLImageElement> & {
-  src: string;
-  alt: string;
-  fallbackSrc?: string;
-  layout?: "fill" | "responsive";
-  objectFit?: "contain" | "cover" | "fill" | "none" | "scale-down";
+import dayjs from "dayjs";
+import { useAtomValue } from "jotai";
+import mime from "mime-types";
+
+import { changeDate } from "@utils/changeDate";
+import { isValidExtension } from "@utils/isValidExtension";
+
+import { TChatMessageDetail } from "@typings/Chat";
+
+import { RoomMemberHistoryAtom } from "@stores/RoomStore";
+
+type NoticeCardProps = {
+  content: TChatMessageDetail;
 };
 
-export const NoticeCard: React.FC<NoticeCardProps> = ({
-  src,
-  alt,
-  fallbackSrc = "path/to/fallback/image.jpg",
-  layout = "responsive",
-  objectFit = "cover",
-  className,
-  ...props
-}) => {
-  const [imgSrc, setImgSrc] = useState(src);
-  const [isLoading, setIsLoading] = useState(true);
+export const NoticeCard = ({ content }: NoticeCardProps) => {
+  const memberHistory = useAtomValue(RoomMemberHistoryAtom);
+  const memberInfo = memberHistory.find(
+    (member) => member.id === content.senderId
+  );
 
-  const handleError = () => {
-    setImgSrc(fallbackSrc);
+  const getFirstLine = (text: string) => {
+    const firstLineBreak = text.indexOf("\n");
+    return firstLineBreak === -1 ? text : `${text.slice(0, firstLineBreak)}...`;
   };
 
-  const handleLoad = () => {
-    setIsLoading(false);
-  };
+  const renderMedia = () => {
+    if (!content.files.length) return null;
 
-  const getWrapperClass = () => {
-    if (layout === "fill") return "absolute inset-0";
-    if (layout === "responsive") return "relative w-full h-0 pb-[100%]"; // 1:1 aspect ratio
-    return "";
-  };
+    const file = content.files[0];
+    const containerClass = "flex items-center justify-center";
 
-  const getImageClass = () => {
-    let classes = "transition-opacity duration-300 ";
-    classes += isLoading ? "opacity-0" : "opacity-100";
-    if (layout === "fill" || layout === "responsive")
-      classes += " absolute inset-0 w-full h-full";
-    classes += ` object-${objectFit}`;
-    return classes;
+    if (content.messageType === "IMAGE") {
+      return (
+        <div className={`${containerClass} h-20 w-20`}>
+          <img
+            src={file.url}
+            alt={file.name}
+            className="h-full w-full rounded object-cover"
+          />
+        </div>
+      );
+    }
+
+    if (content.messageType === "FILE") {
+      const extension = mime.extension(file.mimeType);
+      const validExtension = isValidExtension(extension) ? extension : "txt";
+
+      return (
+        <div className={`${containerClass} w-16`}>
+          <FileIcon
+            extension={validExtension}
+            {...defaultStyles[validExtension]}
+          />
+        </div>
+      );
+    }
+
+    return null;
   };
 
   return (
-    <div className={`${getWrapperClass()} ${className || ""}`}>
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
-          <span className="text-gray-500">Loading...</span>
+    <div className="flex h-28 w-full cursor-pointer bg-gray-50 p-4 hover:bg-gray-100">
+      <div className="flex w-80 flex-shrink-0 flex-col justify-center gap-3">
+        <p className="overflow-hidden text-ellipsis whitespace-nowrap break-all text-gray-700">
+          {getFirstLine(content.plainText)}
+        </p>
+        <div className="flex gap-1 text-xs text-gray-500">
+          <p>{dayjs(content.createdAt).format("YYYY.MM.DD")}</p>
+          <p>{changeDate(dayjs(content.createdAt))}</p>
+          <p className="ml-1">{memberInfo?.name}</p>
         </div>
-      )}
-      <img
-        src={imgSrc}
-        alt={alt}
-        onError={handleError}
-        onLoad={handleLoad}
-        className={getImageClass()}
-        {...props}
-      />
+      </div>
+
+      <div className="flex h-full w-full items-center justify-end">
+        {renderMedia()}
+      </div>
     </div>
   );
 };

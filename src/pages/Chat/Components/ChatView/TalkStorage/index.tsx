@@ -46,7 +46,7 @@ export const TalkStorage = ({
 
         <Tabs
           defaultValue="images"
-          className="flex flex-grow flex-col overflow-hidden"
+          className="flex flex-grow flex-col overflow-hidden pb-3"
         >
           <TabsList className="w-full justify-between">
             <TabsTrigger value="images">사진</TabsTrigger>
