@@ -1,9 +1,12 @@
 import { FileIcon, defaultStyles } from "react-file-icon";
 
 import dayjs from "dayjs";
+import { Download } from "lucide-react";
 import mime from "mime-types";
 
-import { TFile } from "@typings/Chat";
+import { downloadFile } from "@utils/downloadFile";
+
+import { TChatMessageDetail, TFile } from "@typings/Chat";
 
 import { formatFileSize, isValidExtension } from "./utils";
 
@@ -14,6 +17,13 @@ type FileCardProps = {
 export const FileCard = ({ file }: FileCardProps) => {
   const extension = mime.extension(file.mimeType);
   const validExtension = isValidExtension(extension) ? extension : "txt";
+
+  const handleDownload = async (file: TChatMessageDetail["files"][0]) => {
+    const success = await downloadFile(file.url, file.name);
+    if (!success) {
+      // [TODO: 다운로드 실패할 경우 에러 처리]
+    }
+  };
 
   return (
     <div className="flex h-full cursor-pointer flex-col gap-4 rounded-md border p-4 shadow-md hover:shadow-lg">
@@ -32,7 +42,16 @@ export const FileCard = ({ file }: FileCardProps) => {
             유효기간: {dayjs().format("YYYY.MM.DD")}
           </p>
         </div>
-        <p className="text-xs text-gray-400">{formatFileSize(file.size)}</p>
+        <div className="flex justify-between">
+          <p className="text-xs text-gray-400">{formatFileSize(file.size)}</p>
+          <button
+            onClick={() => handleDownload(file)}
+            className="flex items-center gap-1 self-end text-xs text-gray-500 hover:text-gray-700"
+          >
+            <Download size={14} />
+            <span>다운로드</span>
+          </button>
+        </div>
       </div>
     </div>
   );
