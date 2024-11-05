@@ -1,13 +1,12 @@
-import { useCallback } from "react";
-
 import { FileIcon, defaultStyles } from "react-file-icon";
 
 import { Download } from "lucide-react";
 import mime from "mime-types";
 
+import { downloadFile } from "@utils/downloadFile";
 import { isValidExtension } from "@utils/isValidExtension";
 
-import { TFile } from "@typings/Chat";
+import { TChatMessageDetail, TFile } from "@typings/Chat";
 
 type FileMessageProps = {
   file: TFile;
@@ -16,14 +15,12 @@ type FileMessageProps = {
 export const FileMessage = ({ file }: FileMessageProps) => {
   const fileSize = `${(file.size / 1024).toFixed(1)} KB`;
 
-  const handleDownload = useCallback(() => {
-    const link = document.createElement("a");
-    link.href = file.url;
-    link.download = file.name;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }, [file]);
+  const handleDownload = async (file: TChatMessageDetail["files"][0]) => {
+    const success = await downloadFile(file.url, file.name);
+    if (!success) {
+      // [TODO: 다운로드 실패할 경우 에러 처리]
+    }
+  };
 
   const extension = mime.extension(file.mimeType);
   const validExtension = isValidExtension(extension) ? extension : "txt";
@@ -43,7 +40,7 @@ export const FileMessage = ({ file }: FileMessageProps) => {
         </div>
       </div>
       <button
-        onClick={handleDownload}
+        onClick={() => handleDownload(file)}
         className="flex items-center gap-2 self-end rounded-md px-2 py-1 text-sm hover:bg-gray-50"
       >
         <Download size={16} />

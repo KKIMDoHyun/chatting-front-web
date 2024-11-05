@@ -3,7 +3,9 @@ import React, { useState } from "react";
 import dayjs from "dayjs";
 import { useAtomValue } from "jotai";
 
-import { TFile } from "@typings/Chat";
+import { downloadFile } from "@utils/downloadFile";
+
+import { TChatMessageDetail, TFile } from "@typings/Chat";
 
 import { RoomMemberHistoryAtom } from "@stores/RoomStore";
 
@@ -25,28 +27,12 @@ export const ImageViewModal: React.FC<ImageViewModalProps> = ({
 
   const [isDownloading, setIsDownloading] = useState(false);
 
-  const handleSave = async () => {
-    if (isDownloading) return;
-
+  const handleDownload = async (file: TChatMessageDetail["files"][0]) => {
     setIsDownloading(true);
-    try {
-      const response = await fetch(file.url);
-      if (!response.ok) throw new Error("Network response was not ok");
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = file.name || "image";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Download failed:", error);
-      alert("파일 다운로드에 실패했습니다. 다시 시도해 주세요.");
-    } finally {
-      setIsDownloading(false);
+    const success = await downloadFile(file.url, file.name);
+    setIsDownloading(false);
+    if (!success) {
+      // [TODO: 다운로드 실패할 경우 에러 처리]
     }
   };
 
@@ -75,7 +61,7 @@ export const ImageViewModal: React.FC<ImageViewModalProps> = ({
           닫기
         </button>
         <button
-          onClick={handleSave}
+          onClick={() => handleDownload(file)}
           disabled={isDownloading}
           className={`rounded-md px-4 py-2 text-white transition duration-300 ${
             isDownloading

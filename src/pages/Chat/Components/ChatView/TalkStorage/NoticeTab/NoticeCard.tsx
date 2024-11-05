@@ -70,7 +70,8 @@ export const NoticeCard = ({ content }: NoticeCardProps) => {
         <div className="flex gap-1 text-xs text-gray-500">
           <p>{dayjs(content.createdAt).format("YYYY.MM.DD")}</p>
           <p>{changeDate(dayjs(content.createdAt))}</p>
-          <p className="ml-1">{memberInfo?.name}</p>
+          <p>·</p>
+          <p>{memberInfo?.name}</p>
         </div>
       </div>
 
