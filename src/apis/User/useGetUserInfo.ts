@@ -10,7 +10,7 @@ type GetUserInfoReq = {
   userId: string;
 };
 
-type GetUserInfoRes = Omit<TUser, "email">;
+type GetUserInfoRes = TUser;
 
 const getUserInfo = async (params: GetUserInfoReq) => {
   const { userId } = params;
