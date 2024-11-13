@@ -9,10 +9,15 @@ export type TChatMessageDetail = {
   plainText: string;
   files: TFile[];
   options: string[];
-  reactions: string[];
+  reactions: TReaction[];
   replyTo: string | null;
   isDeleted: boolean;
   isNotice: boolean;
+};
+
+type TReaction = {
+  emojiName: string;
+  memberIds: string[];
 };
 
 export type TFile = {
