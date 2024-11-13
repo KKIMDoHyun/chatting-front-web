@@ -8,6 +8,7 @@ import { useEnhancedMessages } from "@apis/Chat/useGetEnhancedMessages";
 
 import { createGroupedMessageStructure } from "@utils/groupMessagesByDate";
 
+import { useChatRoomReadStatus } from "@hooks/useChatRoomReadStatus";
 import { useWebSocketSubscription } from "@hooks/useWebSocketSubscription";
 
 import { TChatMessageDetail } from "@typings/Chat";
@@ -18,7 +19,6 @@ import { Spinner } from "@components/Spinner";
 import { MyInfoAtom } from "@stores/UserStore";
 
 import { MessageGroup } from "./MessageGroup";
-import { useChatRoomReadStatus } from "./useChatRoomReadStatus";
 
 export const ChatMessage = () => {
   const { id: roomId } = useParams<{ id: string }>();
@@ -39,7 +39,7 @@ export const ChatMessage = () => {
     isFetchingNextMessages,
   } = useEnhancedMessages({ roomId: roomId ?? "" });
 
-  function scrollToMessagePosition(messageId: string) {
+  const scrollToMessagePosition = (messageId: string) => {
     if (containerRef.current && messages.length > 0) {
       const targetIndex = messages.findIndex((msg) => msg.id === messageId);
       if (targetIndex !== -1) {
@@ -50,15 +50,18 @@ export const ChatMessage = () => {
         containerRef.current.scrollTop = targetPosition - containerHeight / 2;
       }
     }
-  }
+  };
 
-  function scrollToBottom() {
-    if (containerRef.current) {
-      containerRef.current.scrollTop = containerRef.current.scrollHeight;
-    }
-  }
+  const scrollToBottom = () => {
+    requestAnimationFrame(() => {
+      if (containerRef.current) {
+        const { clientHeight, scrollHeight } = containerRef.current;
+        containerRef.current.scrollTop = scrollHeight - clientHeight;
+      }
+    });
+  };
 
-  function handleScroll() {
+  const handleScroll = () => {
     if (containerRef.current && data) {
       const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
 
@@ -74,9 +77,9 @@ export const ChatMessage = () => {
         fetchNextMessages(messages[messages.length - 1].id);
       }
     }
-  }
+  };
 
-  function handleNewMessage(data: CallbackProps) {
+  const handleNewMessage = (data: CallbackProps) => {
     const newMessage = data as TChatMessageDetail;
     if (newMessage.roomId === roomId) {
       setMessages((prevMessages) => {
@@ -84,13 +87,16 @@ export const ChatMessage = () => {
           return prevMessages;
         }
         const updatedMessages = [...prevMessages, newMessage];
-        if (isNearBottomRef.current) {
-          setTimeout(scrollToBottom, 0);
+
+        // 내가 보낸 메시지이거나 스크롤이 하단에 있을 때 스크롤
+        if (newMessage.senderId === myInfo?.id || isNearBottomRef.current) {
+          requestAnimationFrame(scrollToBottom);
         }
+
         return updatedMessages;
       });
     }
-  }
+  };
 
   useEffect(() => {
     isInitialLoadRef.current = true;
