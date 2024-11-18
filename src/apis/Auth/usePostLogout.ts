@@ -5,7 +5,9 @@ import { QUERY_KEYS } from "@apis/QUERY_KEYS";
 
 import { TErrorRes } from "@typings/Axios";
 
-type PostLogoutReq = object;
+type PostLogoutReq = {
+  deviceType: "WEB" | "IOS" | "ANDROID";
+};
 
 type PostLogoutRes = object;
 

@@ -81,12 +81,7 @@ export const LoginPage = () => {
     }
     setIsLoading(true);
     mutate(
-      {
-        fcmToken:
-          "eVJfvqVRE0_DFSXrh3HPKH:APA91bHE8K5HPSQo_MjmpL1gElC-AWUiR5YrokELntTWiAgScK8HzzQhTlJj4XFJTBIJtLsMGrghj-7XtY74Gd7TdHw4WxL-um-8FQxQSsgtnID7NiJ1pKo",
-        deviceType: "WEB",
-        ...data,
-      },
+      { deviceType: "WEB", ...data },
       { onSuccess: handleLoginSuccess, onError: handleLoginError }
     );
   };

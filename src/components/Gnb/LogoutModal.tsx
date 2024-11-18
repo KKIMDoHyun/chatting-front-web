@@ -15,7 +15,7 @@ export const LogoutModal = ({ closeModal, navigate }: LogoutModalProps) => {
 
   const handleLogout = () => {
     mutate(
-      {},
+      { deviceType: "WEB" },
       {
         onSuccess: () => {
           localStorage.removeItem("accessToken");
