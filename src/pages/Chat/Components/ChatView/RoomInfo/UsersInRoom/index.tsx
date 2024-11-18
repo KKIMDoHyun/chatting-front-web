@@ -60,9 +60,13 @@ export const UsersInRoom = ({ memberSize }: UsersInRoomProps) => {
                   key={user.id}
                   className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50"
                 >
-                  <p className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 font-semibold text-blue-500">
-                    {user.name.charAt(0).toUpperCase()}
-                  </p>
+                  <div className="h-8 w-8 overflow-hidden rounded-full bg-slate-400">
+                    <img
+                      src={user.profileImageUrl}
+                      alt={`${user.name}'s profile`}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
                   <div className="flex items-center gap-1 text-sm font-medium text-gray-700">
                     {user.name}
                     {myInfo.id === user.id && (

@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 
-import { Search, User } from "lucide-react";
-
 import { useInviteRoom } from "@apis/Room/useInviteRoom";
 import { useGetInvitableUsers } from "@apis/User/useGetInvitableUsers";
 
@@ -18,7 +16,6 @@ export const InviteUserModal: React.FC<InviteUserModalProps> = ({
 }) => {
   const query = useGetInvitableUsers({ roomId });
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
   const { mutate } = useInviteRoom();
 
   const handleUserToggle = (userId: string) => {
@@ -46,16 +43,7 @@ export const InviteUserModal: React.FC<InviteUserModalProps> = ({
       <div className="mb-2 self-start text-sm text-gray-500">
         초대할 사용자 {selectedUsers.length}명 선택됨
       </div>
-      <div className="relative mb-4 w-full">
-        <input
-          type="text"
-          placeholder="사용자 검색..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full rounded-md border border-gray-300 py-2 pl-10 pr-4 focus:border-gray-700"
-        />
-        <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
-      </div>
+
       <QueryWrapper query={query}>
         {(data) => (
           <div className="w-full flex-grow overflow-y-auto">
@@ -76,8 +64,12 @@ export const InviteUserModal: React.FC<InviteUserModalProps> = ({
                     htmlFor={`user-${user.id}`}
                     className="flex flex-grow cursor-pointer items-center"
                   >
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-gray-600">
-                      <User size={20} />
+                    <div className="h-8 w-8 overflow-hidden rounded-full bg-slate-400">
+                      <img
+                        src={user.profileImageUrl}
+                        alt={`${user.name}'s profile`}
+                        className="h-full w-full object-cover"
+                      />
                     </div>
                     <span className="ml-2 text-sm font-medium text-gray-700">
                       {user.name}

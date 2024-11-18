@@ -4,7 +4,7 @@ import { TFile } from "@typings/Chat";
 
 import { useModal } from "@components/Modal/useModal";
 
-import { ImageViewModal } from "../../MessageItem/MessageContent/ImageViewModal";
+import { ImageViewModal } from "../../../MessageItem/MessageContent/ImageViewModal";
 
 type ImageCardProps = {
   file: TFile;

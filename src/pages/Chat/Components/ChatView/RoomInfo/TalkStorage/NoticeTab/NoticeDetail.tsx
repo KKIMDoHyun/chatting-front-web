@@ -15,7 +15,7 @@ import { useModal } from "@components/Modal/useModal";
 
 import { RoomMemberHistoryAtom } from "@stores/RoomStore";
 
-import { ImageViewModal } from "../../MessageItem/MessageContent/ImageViewModal";
+import { ImageViewModal } from "../../../MessageItem/MessageContent/ImageViewModal";
 
 type NoticeDetailProps = {
   content: TChatMessageDetail;
