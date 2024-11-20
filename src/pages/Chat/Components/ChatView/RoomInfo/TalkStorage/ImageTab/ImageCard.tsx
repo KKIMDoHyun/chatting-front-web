@@ -2,9 +2,8 @@ import { useState } from "react";
 
 import { TFile } from "@typings/Chat";
 
+import { ImageViewModal } from "@components/ImageViewModal";
 import { useModal } from "@components/Modal/useModal";
-
-import { ImageViewModal } from "../../../MessageItem/MessageContent/ImageViewModal";
 
 type ImageCardProps = {
   file: TFile;

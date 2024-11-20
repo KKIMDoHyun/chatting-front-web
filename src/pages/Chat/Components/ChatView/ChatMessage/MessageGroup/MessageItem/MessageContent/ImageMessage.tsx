@@ -1,8 +1,7 @@
 import { TFile } from "@typings/Chat";
 
+import { ImageViewModal } from "@components/ImageViewModal";
 import { useModal } from "@components/Modal/useModal";
-
-import { ImageViewModal } from "./ImageViewModal";
 
 type ItemMessageProps = {
   file: TFile;

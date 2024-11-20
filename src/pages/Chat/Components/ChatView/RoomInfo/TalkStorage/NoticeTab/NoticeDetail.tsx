@@ -11,11 +11,10 @@ import { isValidExtension } from "@utils/isValidExtension";
 
 import { TChatMessageDetail } from "@typings/Chat";
 
+import { ImageViewModal } from "@components/ImageViewModal";
 import { useModal } from "@components/Modal/useModal";
 
 import { RoomMemberHistoryAtom } from "@stores/RoomStore";
-
-import { ImageViewModal } from "../../../MessageItem/MessageContent/ImageViewModal";
 
 type NoticeDetailProps = {
   content: TChatMessageDetail;

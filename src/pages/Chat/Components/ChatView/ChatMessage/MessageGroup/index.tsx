@@ -6,7 +6,7 @@ import { checkDisplayProfile } from "@utils/checkDisplayProfile";
 import { TChatMessageDetail } from "@typings/Chat";
 import { TUser } from "@typings/User";
 
-import { MessageItem } from "../MessageItem";
+import { MessageItem } from "./MessageItem";
 
 type MessageGroupProps = {
   date: string;
