@@ -1,11 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
 import { useAtomValue } from "jotai";
 import { UserPlus, Users } from "lucide-react";
 
 import { useGetUsersInRoom } from "@apis/User/useGetUsersInRoom";
+
+import { useWebSocketSubscription } from "@hooks/useWebSocketSubscription";
+
+import { UpdateRoomEvent } from "@typings/WebsocketMessage.type";
+import { CallbackProps } from "@typings/WebsocketProvider.type";
 
 import { useModal } from "@components/Modal/useModal";
 import { QueryWrapper } from "@components/QueryWrapper";
@@ -20,7 +25,9 @@ type UsersInRoomProps = {
 };
 
 export const UsersInRoom = ({ memberSize }: UsersInRoomProps) => {
+  const { pathname } = useLocation();
   const { id } = useParams<{ id: string }>();
+  const [members, setMembers] = useState(0);
   const [isOn, setIsOn] = useState(false);
   const query = useGetUsersInRoom({ roomId: id ?? "", isOn });
   const myInfo = useAtomValue(MyInfoAtom);
@@ -34,6 +41,17 @@ export const UsersInRoom = ({ memberSize }: UsersInRoomProps) => {
     });
   };
 
+  useEffect(() => {
+    setMembers(memberSize);
+  }, [memberSize, pathname]);
+
+  const handleMembers = (data: CallbackProps) => {
+    const changedRoom = data as UpdateRoomEvent["data"];
+    setMembers(changedRoom.memberIds.length);
+  };
+
+  useWebSocketSubscription("ROOM_CHANGED", handleMembers);
+
   if (!myInfo) return null;
 
   return (
@@ -45,7 +63,7 @@ export const UsersInRoom = ({ memberSize }: UsersInRoomProps) => {
       <PopoverTrigger asChild>
         <button className="flex flex-shrink-0 items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none">
           <Users size={18} />
-          <span className="select-none">{memberSize}명</span>
+          <span className="select-none">{members}명</span>
         </button>
       </PopoverTrigger>
       <PopoverContent className="mr-7 w-[250px] overflow-hidden rounded-md p-0 shadow-lg">
