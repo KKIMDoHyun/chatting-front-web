@@ -1,6 +1,11 @@
 import { useState } from "react";
 
-import { FieldValues, Path, UseFormRegister } from "react-hook-form";
+import {
+  FieldValues,
+  Path,
+  RegisterOptions,
+  UseFormRegister,
+} from "react-hook-form";
 
 import { Eye, EyeOff } from "lucide-react";
 
@@ -9,7 +14,7 @@ type InputFieldProps<TFieldValues extends FieldValues> = {
   placeholder: string;
   type: string;
   register: UseFormRegister<TFieldValues>;
-  validation?: Record<string, unknown>;
+  validation?: RegisterOptions<TFieldValues, Path<TFieldValues>>;
   className?: string;
   isPassword?: boolean;
 };
