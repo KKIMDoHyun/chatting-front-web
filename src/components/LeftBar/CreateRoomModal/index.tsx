@@ -16,7 +16,6 @@ import { MyInfoAtom } from "@stores/UserStore";
 import { ModalFooter } from "./ModalFooter";
 import { RoomNameInput } from "./RoomNameInput";
 import { UserList } from "./UserList";
-import { UserSearchInput } from "./UserSearchInput";
 
 type CreateRoomModalProps = {
   closeModal: () => void;
@@ -30,7 +29,6 @@ export const CreateRoomModal = ({
   const query = useGetUsers();
   const [selectedUsers, setSelectedUsers] = useState<TUser[]>([]);
   const myInfo = useAtomValue(MyInfoAtom);
-  const [searchTerm, setSearchTerm] = useState("");
   const [roomName, setRoomName] = useState("");
   const { mutate } = useCreateRoom();
 
@@ -72,8 +70,6 @@ export const CreateRoomModal = ({
       <div className="mb-4 self-start text-sm text-gray-600">
         초대할 사용자 {selectedUsers.length}명 선택됨
       </div>
-
-      <UserSearchInput searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
       <QueryWrapper query={query}>
         {(data) => (

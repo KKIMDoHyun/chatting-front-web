@@ -16,7 +16,7 @@ export const UserList: React.FC<UserListProps> = ({
   handleUserToggle,
 }) => (
   <div className="w-full flex-grow overflow-y-auto">
-    <div className="space-y-2 overflow-y-auto pr-2">
+    <div className="overflow-y-auto pr-2">
       {users.map((user) => (
         <div
           key={user.id}
