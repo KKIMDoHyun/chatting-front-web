@@ -16,7 +16,7 @@ export const Gnb: React.FC = () => {
       </div>
 
       {/* 유저 정보 */}
-      <div className="flex w-36 items-center justify-center">
+      <div className="flex w-fit items-center justify-center">
         <UserInfo />
       </div>
     </div>
