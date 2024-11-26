@@ -9,7 +9,7 @@ import { TSignUpForm } from "@typings/Auth";
 import { InputField } from "@components/Auth/InputField";
 import { Button } from "@components/ui";
 
-import { usernameCheckAtom } from "@stores/AuthStore";
+import { UsernameCheckAtom } from "@stores/AuthStore";
 
 export const UsernameForm = () => {
   const {
@@ -21,7 +21,7 @@ export const UsernameForm = () => {
   } = useFormContext<TSignUpForm>();
 
   const { mutate: checkUsernameMutate } = useCheckUsername();
-  const [usernameCheck, setUsernameCheck] = useAtom(usernameCheckAtom);
+  const [usernameCheck, setUsernameCheck] = useAtom(UsernameCheckAtom);
   const username = watch("username");
 
   const handleCheckUsername = () => {

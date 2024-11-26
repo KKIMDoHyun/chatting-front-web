@@ -6,7 +6,7 @@ import { TSignUpForm } from "@typings/Auth";
 
 import { Button } from "@components/ui";
 
-import { usernameCheckAtom } from "@stores/AuthStore";
+import { UsernameCheckAtom } from "@stores/AuthStore";
 
 import { PasswordConfirmForm } from "./PasswordConfirmForm";
 import { PasswordForm } from "./PasswordForm";
@@ -18,7 +18,7 @@ type StepOneProps = {
 
 export const StepOne = ({ setStep }: StepOneProps) => {
   const { trigger, watch, setError } = useFormContext<TSignUpForm>();
-  const usernameCheck = useAtomValue(usernameCheckAtom);
+  const usernameCheck = useAtomValue(UsernameCheckAtom);
   const username = watch("username");
 
   const handleNextStep = async () => {

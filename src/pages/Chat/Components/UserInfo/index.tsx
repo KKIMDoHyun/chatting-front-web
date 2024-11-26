@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
+import { useAtomValue } from "jotai";
 import { Mail, MessageSquare, Phone } from "lucide-react";
 
 import { useCreateRoom } from "@apis/Room/useCreateRoom";
@@ -7,6 +8,8 @@ import { useGetUserInfo } from "@apis/User/useGetUserInfo";
 
 import { QueryWrapper } from "@components/QueryWrapper";
 import { Button } from "@components/ui";
+
+import { MyInfoAtom } from "@stores/UserStore";
 
 type UserInfoProps = {
   userId: string;
@@ -16,6 +19,7 @@ export const UserInfo = ({ userId }: UserInfoProps) => {
   const navigate = useNavigate();
   const query = useGetUserInfo({ userId });
   const { mutate } = useCreateRoom();
+  const myInfo = useAtomValue(MyInfoAtom);
 
   const handleCreateRoom = () => {
     if (query.data) {
@@ -33,6 +37,8 @@ export const UserInfo = ({ userId }: UserInfoProps) => {
       );
     }
   };
+
+  if (!myInfo) return null;
 
   return (
     <QueryWrapper query={query}>
@@ -66,15 +72,17 @@ export const UserInfo = ({ userId }: UserInfoProps) => {
                 </div>
               </div>
 
-              <div className="mt-8">
-                <Button
-                  onClick={handleCreateRoom}
-                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-2 font-medium text-white transition-colors hover:bg-blue-700"
-                >
-                  <MessageSquare className="h-4 w-4" />
-                  1:1 채팅하기
-                </Button>
-              </div>
+              {myInfo.id !== userId && (
+                <div className="mt-8">
+                  <Button
+                    onClick={handleCreateRoom}
+                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-2 font-medium text-white transition-colors hover:bg-blue-700"
+                  >
+                    <MessageSquare className="h-4 w-4" />
+                    1:1 채팅하기
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>

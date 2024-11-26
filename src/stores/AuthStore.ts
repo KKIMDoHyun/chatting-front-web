@@ -1,3 +1,3 @@
 import { atom } from "jotai";
 
-export const usernameCheckAtom = atom<boolean>(false);
+export const UsernameCheckAtom = atom<boolean>(false);
