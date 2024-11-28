@@ -17,43 +17,29 @@ type PostLoginRes = {
   refreshToken: string;
 };
 
-const requestNotificationPermission = async () => {
-  try {
-    const permission = await Notification.requestPermission();
-    return permission === "granted";
-  } catch (error) {
-    console.error("Error requesting notification permission:", error);
-    return false;
-  }
-};
-
 const getFCMToken = async () => {
   try {
-    const token = await getToken(messaging, {
-      vapidKey: import.meta.env.VITE_VAPID_KEY,
-    });
-    return token;
+    const permission = await Notification.requestPermission();
+    if (permission === "granted") {
+      const token = await getToken(messaging, {
+        vapidKey: import.meta.env.VITE_VAPID_KEY,
+      });
+      return token;
+    }
+    return null;
   } catch (error) {
-    console.error("Error generating FCM token:", error);
+    console.error("FCM 토큰 생성 중 오류:", error);
     return null;
   }
 };
 
 const postLogin = async (params: PostLoginReq) => {
   try {
-    const isPermissionGranted = await requestNotificationPermission();
-    if (!isPermissionGranted) {
-      throw new Error("Notification permission denied");
-    }
-
     const fcmToken = await getFCMToken();
-    if (!fcmToken) {
-      throw new Error("Failed to generate FCM token");
-    }
 
     return await instance.post<PostLoginReq, PostLoginRes>("/login", {
-      fcmToken,
       ...params,
+      ...(fcmToken && { fcmToken }),
     });
   } catch (error) {
     console.error("Login failed:", error);
