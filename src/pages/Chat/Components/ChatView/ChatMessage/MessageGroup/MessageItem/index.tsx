@@ -10,7 +10,6 @@ type MessageItemProps = {
   message: TChatMessageDetail;
   isCurrentUser: boolean;
   displayProfile: boolean;
-  // isStandardMessage: boolean;
   roomId: string;
   timeValue: string;
   showTime: boolean;
