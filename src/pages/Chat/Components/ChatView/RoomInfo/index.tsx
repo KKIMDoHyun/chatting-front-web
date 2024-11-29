@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Navigate, useParams } from "react-router-dom";
+import { Navigate, useLocation, useParams } from "react-router-dom";
 
 import { useSetAtom } from "jotai";
 import { Archive } from "lucide-react";
@@ -12,7 +12,7 @@ import { useGetRoomInfo } from "@apis/Room/useGetRoomInfo";
 import { QueryWrapper } from "@components/QueryWrapper";
 import { Button } from "@components/ui";
 
-import { RoomMemberHistoryAtom } from "@stores/RoomStore";
+import { RoomMemberHistoryAtom, RoomNoticeAtom } from "@stores/RoomStore";
 
 import { TalkStorage } from "./TalkStorage";
 import { UsersInRoom } from "./UsersInRoom";
@@ -20,14 +20,17 @@ import { UsersInRoom } from "./UsersInRoom";
 export const RoomInfo = () => {
   const { id: roomId } = useParams<{ id: string }>();
   const query = useGetRoomInfo({ roomId: roomId ?? "" });
+  const setRoomNotice = useSetAtom(RoomNoticeAtom);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const setMemberHistory = useSetAtom(RoomMemberHistoryAtom);
+  const location = useLocation();
 
   useEffect(() => {
     if (query.data) {
+      setRoomNotice(query.data.notice);
       setMemberHistory(query.data.memberHistory);
     }
-  }, [query.data, setMemberHistory]);
+  }, [query.data, location, setMemberHistory, setRoomNotice]);
 
   if (!roomId) {
     return <Navigate to="/room" replace />;

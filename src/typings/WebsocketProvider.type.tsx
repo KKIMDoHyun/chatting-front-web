@@ -1,5 +1,6 @@
 import {
   CreateMessageEvent,
+  CreateNoticeEvent,
   CreateRoomEvent,
   UpdateRoomEvent,
 } from "./WebsocketMessage.type";
@@ -7,7 +8,8 @@ import {
 export type TSocketMessage =
   | CreateMessageEvent
   | CreateRoomEvent
-  | UpdateRoomEvent;
+  | UpdateRoomEvent
+  | CreateNoticeEvent;
 
 export type TChannel = TSocketMessage["type"];
 

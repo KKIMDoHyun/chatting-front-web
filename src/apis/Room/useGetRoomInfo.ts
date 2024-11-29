@@ -4,6 +4,7 @@ import { instance } from "@apis/AxiosInstance";
 import { QUERY_KEYS } from "@apis/QUERY_KEYS";
 
 import { TErrorRes } from "@typings/Axios";
+import { TChatMessageDetail } from "@typings/Chat";
 import { TMember } from "@typings/User";
 
 type GetRoomInfoReq = {
@@ -17,6 +18,7 @@ type GetRoomInfoRes = {
   updatedAt: string;
   members: TMember[];
   memberHistory: TMember[];
+  notice: TChatMessageDetail;
 };
 
 const getRoomInfo = async (params: GetRoomInfoReq) => {

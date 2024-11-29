@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { useLocation, useParams } from "react-router-dom";
 
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 
 import { useEnhancedMessages } from "@apis/Chat/useGetEnhancedMessages";
 
@@ -16,6 +16,7 @@ import { CallbackProps } from "@typings/WebsocketProvider.type";
 
 import { Spinner } from "@components/Spinner";
 
+import { RoomNoticeAtom } from "@stores/RoomStore";
 import { MyInfoAtom } from "@stores/UserStore";
 
 import { MessageGroup } from "./MessageGroup";
@@ -30,6 +31,7 @@ export const ChatMessage = () => {
   const isNearBottomRef = useRef<boolean>(true);
   const [messages, setMessages] = useState<TChatMessageDetail[]>([]);
   const [targetMessageId, setTargetMessageId] = useState<string>("");
+  const [roomNotice, setRoomNotice] = useAtom(RoomNoticeAtom);
 
   const {
     data,
@@ -98,6 +100,13 @@ export const ChatMessage = () => {
     }
   };
 
+  const handleNewNotice = (data: CallbackProps) => {
+    const newNotice = data as TChatMessageDetail;
+    if (newNotice.roomId === roomId) {
+      setRoomNotice(newNotice);
+    }
+  };
+
   useEffect(() => {
     isInitialLoadRef.current = true;
   }, [location]);
@@ -142,6 +151,7 @@ export const ChatMessage = () => {
   }, [data, messages]);
 
   useWebSocketSubscription("MESSAGE_CREATED", handleNewMessage);
+  useWebSocketSubscription("NOTICE_CREATED", handleNewNotice);
   useChatRoomReadStatus(roomId ?? "", messages);
 
   if (!roomId) return null;
@@ -149,31 +159,42 @@ export const ChatMessage = () => {
   return (
     <div
       ref={containerRef}
-      className="flex h-full flex-col overflow-y-auto overflow-x-hidden px-[20px] pt-[20px]"
+      className="flex h-full flex-col overflow-y-auto overflow-x-hidden"
     >
-      {isFetchingPreviousMessages && (
-        <div className="flex justify-center py-2">
-          <Spinner />
+      <div className="sticky top-0 z-10 bg-slate-800 px-5 py-3 text-white opacity-85">
+        <div className="flex items-center gap-2">
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-xs">
+            📢
+          </span>
+          <span className="text-sm">{roomNotice?.plainText}</span>
         </div>
-      )}
+      </div>
 
-      {createGroupedMessageStructure(messages).map(
-        ({ date, groupedMessagesByUser }) => (
-          <MessageGroup
-            key={date}
-            date={date}
-            groupedMessagesByUser={groupedMessagesByUser}
-            myInfo={myInfo}
-            roomId={roomId}
-          />
-        )
-      )}
+      <div className="px-[20px] pt-[20px]">
+        {isFetchingPreviousMessages && (
+          <div className="flex justify-center py-2">
+            <Spinner />
+          </div>
+        )}
 
-      {isFetchingNextMessages && (
-        <div className="flex justify-center py-2">
-          <Spinner />
-        </div>
-      )}
+        {createGroupedMessageStructure(messages).map(
+          ({ date, groupedMessagesByUser }) => (
+            <MessageGroup
+              key={date}
+              date={date}
+              groupedMessagesByUser={groupedMessagesByUser}
+              myInfo={myInfo}
+              roomId={roomId}
+            />
+          )
+        )}
+
+        {isFetchingNextMessages && (
+          <div className="flex justify-center py-2">
+            <Spinner />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

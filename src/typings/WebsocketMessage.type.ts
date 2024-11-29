@@ -38,3 +38,11 @@ export type UpdateRoomEvent = {
     memberIds: string[];
   };
 };
+
+/**
+ * 공지사항 등록
+ */
+export type CreateNoticeEvent = {
+  type: "NOTICE_CREATED";
+  data: TChatMessageDetail;
+};
