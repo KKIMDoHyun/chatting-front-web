@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { useLocation, useParams } from "react-router-dom";
 
-import { useAtom, useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 
 import { useEnhancedMessages } from "@apis/Chat/useGetEnhancedMessages";
 
@@ -20,6 +20,7 @@ import { RoomNoticeAtom } from "@stores/RoomStore";
 import { MyInfoAtom } from "@stores/UserStore";
 
 import { MessageGroup } from "./MessageGroup";
+import { Notice } from "./Notice";
 
 export const ChatMessage = () => {
   const { id: roomId } = useParams<{ id: string }>();
@@ -31,7 +32,7 @@ export const ChatMessage = () => {
   const isNearBottomRef = useRef<boolean>(true);
   const [messages, setMessages] = useState<TChatMessageDetail[]>([]);
   const [targetMessageId, setTargetMessageId] = useState<string>("");
-  const [roomNotice, setRoomNotice] = useAtom(RoomNoticeAtom);
+  const setRoomNotice = useSetAtom(RoomNoticeAtom);
 
   const {
     data,
@@ -161,14 +162,7 @@ export const ChatMessage = () => {
       ref={containerRef}
       className="flex h-full flex-col overflow-y-auto overflow-x-hidden"
     >
-      <div className="sticky top-0 z-10 bg-slate-800 px-5 py-3 text-white opacity-85">
-        <div className="flex items-center gap-2">
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-xs">
-            📢
-          </span>
-          <span className="text-sm">{roomNotice?.plainText}</span>
-        </div>
-      </div>
+      <Notice />
 
       <div className="px-[20px] pt-[20px]">
         {isFetchingPreviousMessages && (
