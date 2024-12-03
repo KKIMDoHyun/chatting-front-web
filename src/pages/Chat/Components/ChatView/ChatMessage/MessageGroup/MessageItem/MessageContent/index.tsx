@@ -89,7 +89,7 @@ export const MessageContent = React.memo(
         </div>
 
         <div className="self-end text-[10px] text-yellow-500">
-          {message.unreadCount}
+          {message.unreadUserIds.length}
         </div>
         {showTime && (
           <div className="self-end text-[10px] text-gray-400">{timeValue}</div>

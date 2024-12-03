@@ -13,7 +13,7 @@ export type TChatMessageDetail = {
   replyTo: string | null;
   isDeleted: boolean;
   isNotice: boolean;
-  unreadCount: number;
+  unreadUserIds: string[];
 };
 
 type TReaction = {
