@@ -56,7 +56,6 @@ export const ChatMessage = () => {
     const { clientHeight, scrollHeight } = containerRef.current;
     containerRef.current.scrollTo({
       top: scrollHeight - clientHeight,
-      behavior: "smooth",
     });
   }, []);
 
