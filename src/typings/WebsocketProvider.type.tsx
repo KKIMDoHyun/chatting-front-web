@@ -2,6 +2,8 @@ import {
   CreateMessageEvent,
   CreateNoticeEvent,
   CreateRoomEvent,
+  FocusRoomEvent,
+  UnFocusRoomEvent,
   UpdateRoomEvent,
 } from "./WebsocketMessage.type";
 
@@ -9,7 +11,9 @@ export type TSocketMessage =
   | CreateMessageEvent
   | CreateRoomEvent
   | UpdateRoomEvent
-  | CreateNoticeEvent;
+  | CreateNoticeEvent
+  | FocusRoomEvent
+  | UnFocusRoomEvent;
 
 export type TChannel = TSocketMessage["type"];
 
@@ -24,4 +28,5 @@ export type unsubscribeProps = subscribeProps;
 
 export type SendRequestProps = {
   type: string;
+  data?: CallbackProps;
 };
