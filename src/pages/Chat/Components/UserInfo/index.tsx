@@ -3,11 +3,13 @@ import React from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 
+import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useAtomValue } from "jotai";
 import { MessageSquare } from "lucide-react";
 
 import { useGetFileUrl } from "@apis/Chat/useGetFileUrl";
+import { QUERY_KEYS } from "@apis/QUERY_KEYS";
 import { useCreateRoom } from "@apis/Room/useCreateRoom";
 import { useChangeUserInfo } from "@apis/User/useChangeUserInfo";
 import { useGetUserInfo } from "@apis/User/useGetUserInfo";
@@ -45,6 +47,7 @@ export const UserInfo = ({ userId }: UserInfoProps) => {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
   const previewUrlRef = React.useRef<string>("");
+  const queryClient = useQueryClient();
 
   const methods = useForm<FormValues>({
     defaultValues: {
@@ -217,6 +220,7 @@ export const UserInfo = ({ userId }: UserInfoProps) => {
               URL.revokeObjectURL(previewUrlRef.current);
               previewUrlRef.current = "";
             }
+            queryClient.refetchQueries({ queryKey: QUERY_KEYS.USER.myInfo() });
           },
         }
       );

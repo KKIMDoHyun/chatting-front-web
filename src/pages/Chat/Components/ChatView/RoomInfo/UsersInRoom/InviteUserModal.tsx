@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { useAtom } from "jotai";
+import { useSetAtom } from "jotai";
 
 import { useInviteRoom } from "@apis/Room/useInviteRoom";
 import { useGetInvitableUsers } from "@apis/User/useGetInvitableUsers";
@@ -21,7 +21,7 @@ export const InviteUserModal: React.FC<InviteUserModalProps> = ({
   const query = useGetInvitableUsers({ roomId });
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const { mutate } = useInviteRoom();
-  const [memberHistory, setMemberHistory] = useAtom(RoomMemberHistoryAtom);
+  const setMemberHistory = useSetAtom(RoomMemberHistoryAtom);
 
   const handleUserToggle = (userId: string) => {
     setSelectedUsers((prev) =>
@@ -36,8 +36,7 @@ export const InviteUserModal: React.FC<InviteUserModalProps> = ({
       { roomId, memberIds: selectedUsers },
       {
         onSuccess: (res) => {
-          const newMembers = memberHistory.concat(res.newMembers);
-          setMemberHistory(newMembers);
+          setMemberHistory((prev) => [...prev, ...res.newMembers]);
           closeModal();
         },
       }
