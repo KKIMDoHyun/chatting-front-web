@@ -1,4 +1,5 @@
 import {
+  ChangeUserEvent,
   CreateMessageEvent,
   CreateNoticeEvent,
   CreateRoomEvent,
@@ -13,7 +14,8 @@ export type TSocketMessage =
   | UpdateRoomEvent
   | CreateNoticeEvent
   | FocusRoomEvent
-  | UnFocusRoomEvent;
+  | UnFocusRoomEvent
+  | ChangeUserEvent;
 
 export type TChannel = TSocketMessage["type"];
 

@@ -66,3 +66,17 @@ export type UnFocusRoomEvent = {
     roomId: string;
   };
 };
+
+/**
+ * 유저 정보 수정
+ */
+export type ChangeUserEvent = {
+  type: "USER_CHANGED";
+  data: {
+    userId: string;
+    name: string;
+    email: string;
+    phoneNumber: string;
+    profileImageUrl: string;
+  };
+};

@@ -9,6 +9,12 @@ import LOGO from "@assets/chat-logo.png";
 
 import { useGetRoomInfo } from "@apis/Room/useGetRoomInfo";
 
+import { useWebSocketSubscription } from "@hooks/useWebSocketSubscription";
+
+import { TMember } from "@typings/User";
+import { ChangeUserEvent } from "@typings/WebsocketMessage.type";
+import { CallbackProps } from "@typings/WebsocketProvider.type";
+
 import { QueryWrapper } from "@components/QueryWrapper";
 import { Button } from "@components/ui";
 
@@ -25,12 +31,32 @@ export const RoomInfo = () => {
   const setMemberHistory = useSetAtom(RoomMemberHistoryAtom);
   const location = useLocation();
 
+  const handleChangeUser = (data: CallbackProps) => {
+    const changedUser = data as ChangeUserEvent["data"];
+
+    setMemberHistory((prev) =>
+      prev.map((member: TMember) => {
+        if (member.id === changedUser.userId) {
+          return {
+            ...member,
+            id: changedUser.userId,
+            name: changedUser.name,
+            profileImageUrl: changedUser.profileImageUrl,
+          };
+        }
+        return member;
+      })
+    );
+  };
+
   useEffect(() => {
     if (query.data) {
       setRoomNotice(query.data.notice);
       setMemberHistory(query.data.memberHistory);
     }
   }, [query.data, location, setMemberHistory, setRoomNotice]);
+
+  useWebSocketSubscription("USER_CHANGED", handleChangeUser);
 
   if (!roomId) {
     return <Navigate to="/room" replace />;
