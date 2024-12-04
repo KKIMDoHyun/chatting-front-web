@@ -2,38 +2,56 @@ import { useEffect, useRef } from "react";
 
 import { useCheckRead } from "@apis/Chat/useCheckRead";
 
-import { TChatMessageDetail } from "@typings/Chat";
-
-export const useChatRoomReadStatus = (
-  roomId: string,
-  messages: TChatMessageDetail[]
-) => {
+export const useChatRoomReadStatus = (roomId: string) => {
   const { mutate: checkRead } = useCheckRead();
   const prevRoomIdRef = useRef<string | null>(null);
+  const isFirstMountRef = useRef(true);
+  const timeoutRef = useRef<NodeJS.Timeout>();
 
-  useEffect(() => {
-    const handleFocus = () => {
-      if (roomId && messages.length > 0) {
-        checkRead({ roomId });
-      }
-    };
-
-    // roomId가 비어있거나 이전 roomId와 다를 때 체크
-    if (prevRoomIdRef.current !== null && prevRoomIdRef.current === roomId) {
-      // 이전 채팅방에서 나가는 경우
-      if (messages.length > 0) {
-        checkRead({ roomId: prevRoomIdRef.current });
-      }
+  const debouncedCheckRead = (id: string) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
     }
 
-    // 현재 roomId 저장
-    prevRoomIdRef.current = roomId ?? null;
+    timeoutRef.current = setTimeout(() => {
+      checkRead({ roomId: id });
+    }, 100);
+  };
 
-    // 포커스 이벤트 리스너 등록
-    window.addEventListener("focus", handleFocus);
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible" && roomId) {
+        debouncedCheckRead(roomId);
+      }
+    };
+
+    const handleWindowFocus = () => {
+      if (roomId) {
+        debouncedCheckRead(roomId);
+      }
+    };
+
+    if (
+      !isFirstMountRef.current &&
+      roomId &&
+      prevRoomIdRef.current !== roomId
+    ) {
+      debouncedCheckRead(roomId);
+    }
+
+    isFirstMountRef.current = false;
+    prevRoomIdRef.current = roomId;
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("focus", handleWindowFocus);
 
     return () => {
-      window.removeEventListener("focus", handleFocus);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("focus", handleWindowFocus);
     };
-  }, [roomId, messages, checkRead]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roomId, checkRead]);
 };

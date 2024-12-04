@@ -13,7 +13,6 @@ import { QUERY_KEYS } from "@apis/QUERY_KEYS";
 
 import { createGroupedMessageStructure } from "@utils/groupMessagesByDate";
 
-import { useChatRoomReadStatus } from "@hooks/useChatRoomReadStatus";
 import { useWebSocketSubscription } from "@hooks/useWebSocketSubscription";
 
 import { TChatMessageDetail } from "@typings/Chat";
@@ -207,7 +206,6 @@ export const ChatMessage = () => {
 
   useWebSocketSubscription("MESSAGE_CREATED", handleNewMessage);
   useWebSocketSubscription("NOTICE_CREATED", handleNewNotice);
-  useChatRoomReadStatus(roomId ?? "", messages);
 
   if (!roomId) return null;
 
