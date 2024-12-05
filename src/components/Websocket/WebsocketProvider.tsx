@@ -6,12 +6,13 @@ import React, {
   useState,
 } from "react";
 
+import { instance } from "@apis/AxiosInstance";
+
 import { useHeartbeatInterval } from "@hooks/useHeartbeatInterval";
 
 import {
   CallbackProps,
   SendRequestProps,
-  TSocketMessage,
   subscribeProps,
   unsubscribeProps,
 } from "@typings/WebsocketProvider.type";
@@ -43,8 +44,39 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
   const reconnectAttempts = useRef(0);
   const MAX_RECONNECT_ATTEMPTS = 2;
 
+  const handleTokenExpiration = useCallback(async () => {
+    try {
+      // 토큰 갱신 요청
+      const { accessToken: newAccessToken } = await instance.post<
+        object,
+        { accessToken: string }
+      >("/tokens/reissue");
+
+      // 새로운 토큰 저장
+      localStorage.setItem("accessToken", newAccessToken);
+
+      // axios 인스턴스의 헤더 업데이트
+      instance.defaults.headers.common.Authorization = `Bearer ${newAccessToken}`;
+
+      // 웹소켓 재연결 시도
+      if (ws.current) {
+        ws.current.close(); // 기존 연결 종료
+      }
+      reconnectAttempts.current = 0;
+      connect(); // 새로운 토큰으로 재연결
+
+      return true;
+    } catch (error) {
+      console.error("Failed to refresh token:", error);
+      localStorage.removeItem("accessToken");
+      window.location.href = "/login";
+      return false;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const reconnect = useCallback(() => {
-    if (isConnecting.current) return; // 이미 연결 시도 중이면 추가 시도를 하지 않음
+    if (isConnecting.current) return;
 
     if (reconnectAttempts.current >= MAX_RECONNECT_ATTEMPTS) {
       console.log("웹소켓 최대 연결 횟수 도달... 연결 중지");
@@ -54,7 +86,6 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     const backoffTime = Math.min(1000 * 2 ** reconnectAttempts.current, 30000);
     setTimeout(() => {
       if (!isConnecting.current) {
-        // 타이머 실행 시점에도 연결 중이 아닌지 확인
         connect();
         reconnectAttempts.current++;
       }
@@ -82,6 +113,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     ws.current.onopen = () => {
       setIsReady(true);
       isConnecting.current = false;
+      reconnectAttempts.current = 0;
       console.log("⭐️ WebSocket connection opened ⭐️");
     };
 
@@ -98,15 +130,18 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
       isConnecting.current = false;
     };
 
-    ws.current.onmessage = (event: MessageEvent) => {
+    ws.current.onmessage = async (event: MessageEvent) => {
       try {
-        const message: TSocketMessage = JSON.parse(event.data);
-        const channel = message.type;
-        if (subscribers.current[channel]) {
-          subscribers.current[channel].forEach((callback) =>
-            callback(message.data)
-          );
+        const message = JSON.parse(event.data);
+
+        if (message.errorMessage === "TOKEN_EXPIRED") {
+          console.log("Token expired, attempting to refresh...");
+          const success = await handleTokenExpiration();
+          if (!success) return;
+          return;
         }
+
+        const channel = message.type;
         if (subscribers.current[channel]) {
           subscribers.current[channel].forEach((callback) =>
             callback(message.data)
@@ -116,7 +151,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         console.error("Error processing WebSocket message:", error);
       }
     };
-  }, [reconnect]);
+  }, [reconnect, handleTokenExpiration]);
 
   useEffect(() => {
     connect();
@@ -125,11 +160,10 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
       if (ws.current) {
         ws.current.close();
       }
-      isConnecting.current = false; // cleanup 시 연결 상태 초기화
+      isConnecting.current = false;
     };
   }, [connect]);
 
-  // 메모리 누수 방지
   const cleanup = useCallback(() => {
     subscribers.current = {};
   }, []);
@@ -138,7 +172,6 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     return cleanup;
   }, [cleanup]);
 
-  // 구독 함수
   const subscribe = useCallback(({ channel, callbackFn }: subscribeProps) => {
     if (!subscribers.current[channel]) {
       subscribers.current[channel] = new Set();
@@ -148,7 +181,6 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     console.log(`⭕️ ${channel} 구독. Total subscribers:`, subscribers.current);
   }, []);
 
-  // 구독 해제 함수
   const unsubscribe = useCallback(
     ({ channel, callbackFn }: unsubscribeProps) => {
       if (subscribers.current[channel]) {
@@ -165,7 +197,6 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     []
   );
 
-  // 웹소켓 요청 함수
   const sendRequest = useCallback(
     (props: SendRequestProps) => {
       if (ws.current?.readyState === WebSocket.OPEN) {
@@ -178,7 +209,6 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     [connect]
   );
 
-  // 하트비트 주기 설정
   useHeartbeatInterval(
     () => {
       sendRequest({ type: "HEART_BEAT" });
