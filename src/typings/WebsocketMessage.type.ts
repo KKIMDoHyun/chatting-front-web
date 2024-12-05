@@ -80,3 +80,17 @@ export type ChangeUserEvent = {
     profileImageUrl: string;
   };
 };
+
+/**
+ * 읽은 사람 확인
+ */
+export type UpdateReadReceiptEvent = {
+  type: "READ_RECEIPT_UPDATED";
+  data: {
+    userId: string;
+    roomId: string;
+    fromMessageId: string;
+    toMessageId: string;
+    updatedAt: string;
+  };
+};

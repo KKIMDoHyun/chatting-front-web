@@ -16,6 +16,7 @@ import { createGroupedMessageStructure } from "@utils/groupMessagesByDate";
 import { useWebSocketSubscription } from "@hooks/useWebSocketSubscription";
 
 import { TChatMessageDetail } from "@typings/Chat";
+import { UpdateReadReceiptEvent } from "@typings/WebsocketMessage.type";
 import { CallbackProps } from "@typings/WebsocketProvider.type";
 
 import { Spinner } from "@components/Spinner";
@@ -134,6 +135,87 @@ export const ChatMessage = () => {
     [roomId, setRoomNotice]
   );
 
+  const handleReadReceipt = useCallback(
+    (data: CallbackProps) => {
+      const {
+        userId,
+        roomId: receiptRoomId,
+        fromMessageId,
+        toMessageId,
+      } = data as UpdateReadReceiptEvent["data"];
+
+      // 현재 채팅방의 메시지만 처리
+      if (receiptRoomId !== roomId) return;
+
+      // 캐시된 메시지 데이터 업데이트
+      queryClient.setQueryData(
+        QUERY_KEYS.CHAT.messages(JSON.stringify({ roomId })),
+        (oldData: GetMessagesRes | undefined) => {
+          if (!oldData) return oldData;
+
+          // fromMessageId와 toMessageId의 인덱스 찾기
+          const fromIndex = oldData.contents.findIndex(
+            (msg) => msg.id === fromMessageId
+          );
+          const toIndex = oldData.contents.findIndex(
+            (msg) => msg.id === toMessageId
+          );
+
+          if (fromIndex === -1 || toIndex === -1) return oldData;
+
+          const updatedContents = oldData.contents.map((message, index) => {
+            // 찾은 인덱스 범위 내의 메시지만 처리
+            if (
+              index >= fromIndex &&
+              index <= toIndex &&
+              message.unreadUserIds.includes(userId)
+            ) {
+              return {
+                ...message,
+                unreadUserIds: message.unreadUserIds.filter(
+                  (id) => id !== userId
+                ),
+              };
+            }
+            return message;
+          });
+
+          return {
+            ...oldData,
+            contents: updatedContents,
+          };
+        }
+      );
+
+      // 로컬 상태 업데이트
+      setMessages((prevMessages) => {
+        const fromIndex = prevMessages.findIndex(
+          (msg) => msg.id === fromMessageId
+        );
+        const toIndex = prevMessages.findIndex((msg) => msg.id === toMessageId);
+
+        if (fromIndex === -1 || toIndex === -1) return prevMessages;
+
+        return prevMessages.map((message, index) => {
+          if (
+            index >= fromIndex &&
+            index <= toIndex &&
+            message.unreadUserIds.includes(userId)
+          ) {
+            return {
+              ...message,
+              unreadUserIds: message.unreadUserIds.filter(
+                (id) => id !== userId
+              ),
+            };
+          }
+          return message;
+        });
+      });
+    },
+    [roomId, queryClient]
+  );
+
   useEffect(() => {
     isInitialLoadRef.current = true;
     return () => {
@@ -205,6 +287,7 @@ export const ChatMessage = () => {
 
   useWebSocketSubscription("MESSAGE_CREATED", handleNewMessage);
   useWebSocketSubscription("NOTICE_CREATED", handleNewNotice);
+  useWebSocketSubscription("READ_RECEIPT_UPDATED", handleReadReceipt);
 
   if (!roomId) return null;
 

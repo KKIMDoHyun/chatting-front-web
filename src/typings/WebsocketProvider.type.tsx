@@ -5,6 +5,7 @@ import {
   CreateRoomEvent,
   FocusRoomEvent,
   UnFocusRoomEvent,
+  UpdateReadReceiptEvent,
   UpdateRoomEvent,
 } from "./WebsocketMessage.type";
 
@@ -15,7 +16,8 @@ export type TSocketMessage =
   | CreateNoticeEvent
   | FocusRoomEvent
   | UnFocusRoomEvent
-  | ChangeUserEvent;
+  | ChangeUserEvent
+  | UpdateReadReceiptEvent;
 
 export type TChannel = TSocketMessage["type"];
 
