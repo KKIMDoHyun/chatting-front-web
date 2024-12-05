@@ -5,6 +5,8 @@ import { RoomNoticeAtom } from "@stores/RoomStore";
 export const Notice = () => {
   const roomNotice = useAtomValue(RoomNoticeAtom);
 
+  if (!roomNotice) return null;
+
   return (
     <div className="sticky top-0 z-10 bg-slate-800 px-5 py-3 text-white opacity-95">
       <div className="flex items-center gap-2">
