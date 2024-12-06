@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useSetAtom } from "jotai";
-import { ChevronDown, LogOutIcon, UserIcon } from "lucide-react";
+import { ChevronDown, LogOutIcon } from "lucide-react";
 
 import { useGetMyInfo } from "@apis/User/useGetMyInfo";
 
@@ -43,8 +43,14 @@ export const UserInfo = () => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <div className="flex cursor-pointer items-center gap-1 rounded-full px-4 py-2 transition-colors duration-200 hover:bg-gray-200">
-          <UserIcon className="h-5 w-5 text-gray-600" />
+        <div className="flex cursor-pointer items-center gap-2 rounded-full px-4 py-2 transition-colors duration-200 hover:bg-gray-200">
+          <div className="h-6 w-6 overflow-hidden rounded-full bg-slate-400">
+            <img
+              src={data.profileImageUrl}
+              alt={`${data.name}'s profile`}
+              className="h-full w-full object-cover"
+            />
+          </div>
           <span className="mr-1 text-lg font-semibold text-gray-700">
             {data.name}
           </span>

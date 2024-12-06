@@ -1,7 +1,5 @@
 import React from "react";
 
-import { User } from "lucide-react";
-
 import { TUser } from "@typings/User";
 
 type UserListProps = {
@@ -33,8 +31,12 @@ export const UserList: React.FC<UserListProps> = ({
             htmlFor={`user-${user.id}`}
             className="flex flex-grow cursor-pointer items-center"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-600">
-              <User size={20} />
+            <div className="h-7 w-7 overflow-hidden rounded-full bg-slate-400">
+              <img
+                src={user.profileImageUrl}
+                alt={`${user.name}'s profile`}
+                className="h-full w-full object-cover"
+              />
             </div>
             <span className="ml-3 text-sm font-medium text-gray-700">
               {user.name}
