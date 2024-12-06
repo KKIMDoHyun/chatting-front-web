@@ -1,9 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 
 import { useSetAtom } from "jotai";
-import { ChevronDown, LogOutIcon } from "lucide-react";
+import { ChevronDown, LogOutIcon, UserIcon } from "lucide-react";
 
 import { useGetMyInfo } from "@apis/User/useGetMyInfo";
 
@@ -19,8 +19,10 @@ export const UserInfo = () => {
   const navigate = useNavigate();
   const { showCustomModal, closeCustomModal } = useModal();
   const setMyInfo = useSetAtom(MyInfoAtom);
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = () => {
+    setIsOpen(false);
     showCustomModal({
       displayComponent: (
         <LogoutModal closeModal={closeCustomModal} navigate={navigate} />
@@ -28,6 +30,11 @@ export const UserInfo = () => {
       isShowClose: false,
       isBackDrop: false,
     });
+  };
+
+  const handleUpdateUserInfo = () => {
+    setIsOpen(false);
+    navigate(`/user/${data?.id}`);
   };
 
   useEffect(() => {
@@ -41,7 +48,7 @@ export const UserInfo = () => {
   if (!data) return <div>데이터가 없습니다.</div>;
 
   return (
-    <Popover>
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <div className="flex cursor-pointer items-center gap-2 rounded-full px-4 py-2 transition-colors duration-200 hover:bg-gray-200">
           <div className="h-6 w-6 overflow-hidden rounded-full bg-slate-400">
@@ -63,6 +70,15 @@ export const UserInfo = () => {
             <span className="font-semibold">{data.name}</span>
             <span className="text-sm text-blue-200">{data.email}</span>
           </div>
+
+          <div
+            onClick={handleUpdateUserInfo}
+            className="flex cursor-pointer items-center p-4 transition-colors duration-200 hover:bg-gray-100"
+          >
+            <UserIcon className="mr-2 h-5 w-5 text-gray-600" />
+            <span className="text-gray-700">내 정보 수정</span>
+          </div>
+
           <div
             onClick={handleLogout}
             className="flex cursor-pointer items-center p-4 transition-colors duration-200 hover:bg-gray-100"
