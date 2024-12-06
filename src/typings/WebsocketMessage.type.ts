@@ -1,4 +1,4 @@
-import { TChatMessageDetail } from "./Chat";
+import { TChatMessageDetail, TLastMessage } from "./Chat";
 import { TRoomType } from "./Room";
 
 /**
@@ -21,6 +21,7 @@ export type CreateRoomEvent = {
     createdAt: string;
     updatedAt: string;
     memberIds: string[];
+    lastMessage: TLastMessage;
   };
 };
 

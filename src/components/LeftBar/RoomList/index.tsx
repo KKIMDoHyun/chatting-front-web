@@ -62,6 +62,7 @@ export const RoomList: React.FC = () => {
           name: room.name,
           memberIds: room.memberIds,
           createdAt: room.createdAt,
+          latestMessage: room.lastMessage,
           unread: 0,
         };
         return [newRoom, ...prevRooms];

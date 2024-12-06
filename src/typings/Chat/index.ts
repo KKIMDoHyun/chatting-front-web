@@ -30,7 +30,7 @@ export type TFile = {
 
 export type TLastMessage = Pick<
   TChatMessageDetail,
-  "id" | "messageType" | "senderType" | "senderId" | "createdAt" | "plainText"
+  "id" | "createdAt" | "plainText"
 >;
 
 export type TMessageType = "TEXT" | "IMAGE" | "VIDEO" | "FILE";

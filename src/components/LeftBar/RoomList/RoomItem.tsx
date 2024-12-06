@@ -61,7 +61,7 @@ export const RoomItem = ({ room, isActive, onRoomClick }: RoomItemProps) => {
         </div>
         <div className="mt-1 flex items-center justify-between">
           <p className="truncate text-sm text-gray-600">
-            {room.latestMessage?.plainText || "No messages yet"}
+            {room.latestMessage?.plainText}
           </p>
           {room.unread > 0 && !isHovered && (
             <UnreadCountBadge unread={room.unread} />
