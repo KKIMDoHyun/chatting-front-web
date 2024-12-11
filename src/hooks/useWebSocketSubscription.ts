@@ -7,8 +7,10 @@ import { CallbackProps, TSocketMessage } from "@typings/WebsocketProvider.type";
 
 import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
 
-let activeNotification: Notification | null = null;
-let notificationTimer: number | null = null;
+const activeNotifications = new Map<
+  string,
+  { notification: Notification; timer: number }
+>();
 
 export const useWebSocketSubscription = (
   channel: TSocketMessage["type"],
@@ -20,44 +22,36 @@ export const useWebSocketSubscription = (
 
   const showNotification = useCallback(
     (data: CreateMessageEvent["data"]) => {
-      // 현재 보고 있는 채팅방의 메시지면 알림 표시하지 않음
       if (data.notificationInfo?.roomId === currentRoomId) {
         return;
       }
 
-      // 이전 알림이 있으면 닫기
-      if (activeNotification) {
-        activeNotification.close();
-        if (notificationTimer) {
-          clearTimeout(notificationTimer);
-        }
-      }
+      const notificationId = `${data.notificationInfo?.roomId}-${Date.now()}`;
 
       // 새 알림 생성
-      activeNotification = new Notification(data.notificationInfo?.senderName, {
+      const notification = new Notification(data.notificationInfo?.senderName, {
         body: data.notificationInfo?.plainText,
-        icon: "your-icon-path.png",
-        tag: `chat-${data.notificationInfo?.roomId}`,
+        icon: "/src/assets/chat-logo.png",
+        tag: notificationId,
       });
 
-      // 5초 후 자동으로 알림 닫기
-      notificationTimer = window.setTimeout(() => {
-        if (activeNotification) {
-          activeNotification.close();
-          activeNotification = null;
-        }
-      }, 5000);
+      // 3초 후 자동으로 알림 닫기
+      const timer = window.setTimeout(() => {
+        notification.close();
+        activeNotifications.delete(notificationId);
+      }, 3000);
+
+      // Map에 알림 저장
+      activeNotifications.set(notificationId, { notification, timer });
 
       // 알림 클릭 처리
-      activeNotification.onclick = (event) => {
+      notification.onclick = (event) => {
         event.preventDefault();
         window.focus();
         window.location.href = `/room/${data.notificationInfo?.roomId}`;
-        activeNotification?.close();
-        activeNotification = null;
-        if (notificationTimer) {
-          clearTimeout(notificationTimer);
-        }
+        notification.close();
+        clearTimeout(timer);
+        activeNotifications.delete(notificationId);
       };
     },
     [currentRoomId]
@@ -86,12 +80,12 @@ export const useWebSocketSubscription = (
     subscribe({ channel, callbackFn: wrappedCallback });
 
     return () => {
-      if (activeNotification) {
-        activeNotification.close();
-      }
-      if (notificationTimer) {
-        clearTimeout(notificationTimer);
-      }
+      // 컴포넌트 언마운트 시 모든 알림 정리
+      activeNotifications.forEach(({ notification, timer }) => {
+        notification.close();
+        clearTimeout(timer);
+      });
+      activeNotifications.clear();
       unsubscribe({ channel, callbackFn: wrappedCallback });
     };
   }, [isReady, channel, subscribe, unsubscribe, wrappedCallback]);
