@@ -1,4 +1,4 @@
-import { TChatMessageDetail, TLastMessage } from "./Chat";
+import { TChatMessageDetail, TLastMessage, TNotification } from "./Chat";
 import { TRoomType } from "./Room";
 
 /**
@@ -6,7 +6,7 @@ import { TRoomType } from "./Room";
  */
 export type CreateMessageEvent = {
   type: "MESSAGE_CREATED";
-  data: TChatMessageDetail;
+  data: TChatMessageDetail & TNotification;
 };
 
 /**

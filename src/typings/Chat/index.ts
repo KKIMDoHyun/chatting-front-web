@@ -43,3 +43,14 @@ export type TTalkStorage = {
   messageType: "NOTICE" | "IMAGE" | "VIDEO" | "FILE";
   files: TFile[];
 };
+
+export type TNotification = {
+  notificationInfo: {
+    id: string;
+    roomId: string;
+    roomName: string;
+    senderId: string;
+    senderName: string;
+    plainText: string;
+  };
+};
